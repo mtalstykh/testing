@@ -1,5 +1,33 @@
 document.addEventListener("click", zoomPhotoPost);
 
+document.addEventListener("click", loadMore);
+
+function loadMore(){
+
+	target = event.target;
+	if (!target.classList.contains("button")){
+		return false;
+	}
+	if (!target.closest(".button-showmore-container")){
+		return false;
+	}
+	
+	var responseStatus = loadContent(3, lastConfig);
+
+	if (responseStatus === "Nothing found"){
+		alert("Nothing found");
+		return true;
+	}
+
+	if (responseStatus === "NO MORE"){
+		alert("NO MORE");
+		return true;
+	}
+
+	
+
+}
+
 function zoomPhotoPost(event){
 
   target = event.target;
@@ -13,6 +41,7 @@ function zoomPhotoPost(event){
 
   if (photoPost.classList.contains("card-item--zoomed")){
     document.querySelector(".main-content-wrapper").removeChild(photoPost);
+    stateOfEnvironment.pageState = 'simple';
     return true;
   }
 
@@ -31,30 +60,33 @@ function zoomPhotoPost(event){
     top = window.pageYOffset;
   }
   cardItem.style.top = top + "px";
-  
+  stateOfEnvironment.pageState = "more";
+
 }
 
 function preparePage(){
 
-  if (!stateOfEnvironment.myPage){
-    document.querySelector(".about-user").classList.add("disabled");
+  if (stateOfEnvironment.personalPage){
+    document.querySelector(".about-user").classList.remove("disabled");
+
+    let userProfile = getUserProfile(stateOfEnvironment.personalPage);
+    document.querySelector(".about-user__avatar").setAttribute("src", userProfile.avatar);
+    document.querySelector(".about-user__name").innerHTML = stateOfEnvironment.personalPage;
+    document.querySelector(".about-user__description-text").innerHTML = userProfile.aboutYou;
+    document.querySelector(".about-user__location").innerHTML = userProfile.country + ", " + userProfile.city;
+
+    // loadContent(9, {author: stateOfEnvironment.personalPage});
   }
   if (stateOfEnvironment.currentUser){
     document.querySelector(".header__login").classList.add("disabled");
     document.querySelector(".header__logout").classList.remove("disabled");
     let currentUserName = document.querySelector(".header__current-user-name");
     currentUserName.classList.remove("disabled");
-    currentUserName.innerHTML = stateOfEnvironment.currentUser.split(' ')[0];
-
-    let userProfile = getUserProfile(stateOfEnvironment.currentUser);
-    document.querySelector(".about-user__avatar").setAttribute("src", userProfile.avatar);
-    document.querySelector(".about-user__name").innerHTML = stateOfEnvironment.currentUser;
-    document.querySelector(".about-user__description-text").innerHTML = userProfile.aboutYou;
-    document.querySelector(".about-user__location").innerHTML = userProfile.country + ", " + userProfile.city;
+    currentUserName.innerHTML = stateOfEnvironment.currentUser.split(' ')[0];   
   }
-  else{
-    document.querySelector(".about-user").classList.add("disabled");
-  }
+  // else{
+  //   document.querySelector(".about-user").classList.add("disabled");
+  // }
 
 }
 
@@ -63,8 +95,12 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
   let skip = lastReceivedPosts.length;
   let receivedPhotoPosts;
 
-  if (!filterConfig.hashTags){
+  if (('hashTags' in filterConfig) !== true){
     filterConfig.hashTags = [];
+  }
+
+  if (stateOfEnvironment.personalPage){
+  	filterConfig.author = stateOfEnvironment.personalPage;
   }
 
   if(filterConfig !== lastConfig){
@@ -75,6 +111,28 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
   if (receivedPhotoPosts === false){
     return false;
   }
+
+  if (skip !== 0 && receivedPhotoPosts.length < quantity){					//danger string!!!!!!!!
+  	loadContentStatus = "CONTINUE:  it's all";
+  }
+
+  if (skip !== 0 && receivedPhotoPosts.length === 0){					//danger string!!!!!!!!
+  	loadContentStatus = "NO MORE";
+  }
+
+  if (skip === 0 && receivedPhotoPosts.length < quantity){					//danger string!!!!!!!!
+  	loadContentStatus = "START: it's all";
+  }
+
+  if (skip === 0 && receivedPhotoPosts.length === 0){					//danger string!!!!!!!!
+  	loadContentStatus = "Nothing found";
+  }
+
+  if (receivedPhotoPosts.length === quantity){					//danger string!!!!!!!!
+  	loadContentStatus = "maybe there are some things";
+  }
+
+  // if (receivedPhotoPosts.length)
 
   if (skip === 0 && lastReceivedPosts.length !== 0){
     deleteChildren(document.getElementsByClassName("cards-container")[0]);
@@ -98,7 +156,7 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
   console.log(lastConfig);
   console.log(lastReceivedPosts);
 
-   return true;
+  return loadContentStatus;
 
 }
 
@@ -112,6 +170,7 @@ function appendPhotoPost (photoPost){     //just add photoCardItem in cardContai
 }
 
 function createPhotoPost(mode, photoPost){       //create an return new cardItem without adding
+
   if (!isModeCorrect(mode)){      
     return false;
   }
@@ -407,14 +466,16 @@ function makeDateBeautiful(date){
 
 }
 
+let loadContentStatus = 'maybe there are some things';
+
 let lastReceivedPosts = [];       //keep last received post
 
 let lastConfig = {};        //keep last used config
 
 let stateOfEnvironment = {
-  myPage: true,
-  currentUser: "Maksim Talstykh",
-  pageState: "basic"
+  personalPage: null,
+  currentUser: 'Alexander Martinchik',
+  pageState: "simple"
 };
 
 let hashTagsHint = [

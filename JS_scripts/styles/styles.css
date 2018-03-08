@@ -154,6 +154,7 @@ header{
 }
 
 .header__current-user-name{
+	text-align: right;
 	color: #424242;
 	cursor: pointer;
 	font: 500 18px "Roboto", sans-serif;

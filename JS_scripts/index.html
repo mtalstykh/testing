@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="theme-color" content="#529DFF">
+	<meta name="viewport" content="width=device-width, initial-scale=0.888888888888888888889, user-scalable=no"">
+	<title>AmAm</title>
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" >
+	<link rel="stylesheet" type="text/css" href="styles/styles.css">
+	<script src="scripts/autoreload.js"></script>
+	<script src="Task_4.js"></script>
+	<script src="Task_5.js"></script>
+</head>
+<body>
+	<header class="shadow">
+		<div class="header__content">
+			<div class="header__logo-container">
+				<a class="header__logo" href="#"></a>
+			</div>
+			<form class="header__form">
+				<input class="header__input" type="text" name="find-authors" placeholder="Find more authors" />
+			</form>
+			<div class="header__current-user-container">
+				<div class="header__current-user">
+					<div class="header__current-user-name disabled"></div>
+					<div class="header__logout disabled">Log out</div>
+					<div class="header__login">log in</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	
+	<div class="main-wrapper">
+		<section class="about-user shadow disabled">
+			<img class="about-user__avatar" src="" alt="avatar">
+			<div class="about-user__personal-info">
+				<div class="about-user__name">
+				</div>
+				<div class="about-user__location">
+				</div>
+			</div>
+			<div class="about-user__account-description">
+				<div class="about-user__title">About you</div>
+				<p class="about-user__description-text">
+			</div>
+		</section>	
+
+		<div class="main-content-wrapper shadow">
+			<section class="top-buttons">
+				<div class="button main-button"><i class="hashtag-ico fas fa-hashtag"></i>Filter by hashtag</div>
+				<div class="button main-button"><i class="add-ico fas fa-plus"></i>Add new card</div>
+				<div class="button main-button"><i class="sort-ico fas fa-sort"></i>Sort cards by</div>
+			</section>
+
+			<div class="dark-background disabled"></div>
+
+			<section class="cards-container">
+				
+			</section>
+
+			<div class="button-showmore-container">
+				<div class="button main-button">Load more</div>
+			</div>
+		</div>
+	</div>
+
+	<footer>
+			<span class="footer__left-text">Minsk<br/>2018</span>
+			<a class="footer__logo" href="#"></a>
+			<span class="footer__right-text">Created by<br/>Maksim Talstykh</span>
+	</footer>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+	loadContent(9);
+	preparePage();
+</script>

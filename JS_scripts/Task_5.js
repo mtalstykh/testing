@@ -2,6 +2,78 @@ document.addEventListener("click", zoomPhotoPost);
 
 document.addEventListener("click", loadMore);
 
+document.addEventListener("click", removeHandler);
+
+function removeHandler(event){
+	if (event.target.classList.contains("trash-ico")){
+		removePhotoPost();
+	}
+}
+
+function editPhotoPost(photoPost, selectedId){
+
+	selectedId = selectedId || stateOfEnvironment.zoomedPhotoPost;
+
+	let responseStatus = photoPosts.editPhotoPost(selectedId, photoPost);
+	// console.log(responseStatus);
+	if (!responseStatus){
+		return false;
+	}
+
+	let editedPhotoPost = photoPosts.find(function(element){
+		return element.id === selectedId;
+	});
+
+  responseStatus = isItLocalPost(selectedId);
+
+	if (responseStatus || responseStatus === 0){
+		let newPhotoPost = createPhotoPost('simple', editedPhotoPost);
+		let oldPhotoPost = document.getElementById(selectedId);
+		oldPhotoPost.parentNode.replaceChild(newPhotoPost, oldPhotoPost);
+	}
+  else{
+    console.log("it isn't local photoPost");
+  }
+	
+	if (stateOfEnvironment.pageState === "more"){
+		let newPhotoPost = createPhotoPost('more', editedPhotoPost);
+		let oldPhotoPost = document.querySelector(".card-item--zoomed");
+		oldPhotoPost.parentNode.replaceChild(newPhotoPost, oldPhotoPost);
+
+		setPhotoPostPosition(document.querySelector('.card-item--zoomed'));
+	}
+	
+	return true;
+
+}
+
+function removePhotoPost(selectedId){
+
+  selectedId = selectedId || stateOfEnvironment.zoomedPhotoPost;
+
+  if (!photoPosts.removePhotoPost(selectedId)){
+    console.log("photoPost was deleted or didn't exist");
+    return false;
+  }
+
+  if (!deleteLocalPhotoPost(selectedId)){
+    console.log("It isn't local photoPost");
+    // return false;
+  }
+
+	if (stateOfEnvironment.pageState === "more"){
+		let zoomed__card = document.querySelector(".card-item--zoomed");
+		zoomed__card.parentNode.removeChild(zoomed__card);
+		document.querySelector(".dark-background").classList.toggle("disabled");
+	}
+
+	stateOfEnvironment.pageState = "simple";
+	stateOfEnvironment.zoomedPhotoPost = null;
+
+	return true;
+
+}
+
 function loadMore(){
 
 	target = event.target;
@@ -24,8 +96,6 @@ function loadMore(){
 		return true;
 	}
 
-	
-
 }
 
 function zoomPhotoPost(event){
@@ -42,6 +112,7 @@ function zoomPhotoPost(event){
   if (photoPost.classList.contains("card-item--zoomed")){
     document.querySelector(".main-content-wrapper").removeChild(photoPost);
     stateOfEnvironment.pageState = 'simple';
+    stateOfEnvironment.zoomedPhotoPost = null;
     return true;
   }
 
@@ -50,17 +121,38 @@ function zoomPhotoPost(event){
   let cardsContainer = document.querySelector(".cards-container");
   document.querySelector(".main-content-wrapper").insertBefore(cardItem, cardsContainer);
 
-  let distanceToTheBottom = document.body.scrollHeight - window.pageYOffset;
+  setPhotoPostPosition(cardItem);
+
+  // let distanceToTheBottom = document.body.scrollHeight - window.pageYOffset;
+  // let top;
+  // if (distanceToTheBottom < cardItem.clientHeight){
+  //   console.log(distanceToTheBottom);
+  //   top = document.body.scrollHeight - cardItem.clientHeight;
+  // }
+  // else{
+  //   top = window.pageYOffset;
+  // }
+  // cardItem.style.top = top + "px";
+  // stateOfEnvironment.pageState = "more";
+  // stateOfEnvironment.zoomedPhotoPost = id;
+
+  stateOfEnvironment.pageState = "more";
+  stateOfEnvironment.zoomedPhotoPost = id;
+
+}
+
+function setPhotoPostPosition(cardItem){
+
+	let distanceToTheBottom = document.body.scrollHeight - window.pageYOffset;
   let top;
   if (distanceToTheBottom < cardItem.clientHeight){
-    console.log(distanceToTheBottom);
+    // console.log(distanceToTheBottom);
     top = document.body.scrollHeight - cardItem.clientHeight;
   }
   else{
     top = window.pageYOffset;
   }
   cardItem.style.top = top + "px";
-  stateOfEnvironment.pageState = "more";
 
 }
 
@@ -94,6 +186,12 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
   
   let skip = lastReceivedPosts.length;
   let receivedPhotoPosts;
+
+  if (!filterConfig){
+    filterConfig = {
+      hashTags: []
+    };
+  }
 
   if (('hashTags' in filterConfig) !== true){
     filterConfig.hashTags = [];
@@ -185,13 +283,13 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   }
   else{
     cardItem.className = "card-item shadow";
+    cardItem.setAttribute("id", photoPost.id);
   }
-  cardItem.setAttribute("id", photoPost.id);
+  
 
   let cardItem__photo = document.createElement('img');
   cardItem__photo.className = "card-item__photo";
   let imgSource = photoPost.photoLink;
-  // let imgSource = 'images/1.jpg';
   cardItem__photo.setAttribute('src', imgSource);
   cardItem__photo.setAttribute('alt', 'photo');
   cardItem.appendChild(cardItem__photo);
@@ -239,7 +337,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   }
 
   let editIco = document.createElement('i');
-  if (mode === 'simple'){
+  if (mode === 'simple' || stateOfEnvironment.currentUser !== photoPost.author){
     editIco.className = "edit-ico fas fa-pencil-alt disabled";
   }
   else{
@@ -248,7 +346,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   cardItem__controlButtons.appendChild(editIco);
 
   let trashIco = document.createElement('i');
-  if (mode === 'simple'){
+  if (mode === 'simple' || stateOfEnvironment.currentUser !== photoPost.author){
     trashIco.className = "trash-ico fas fa-trash disabled";
   }
   else{
@@ -412,6 +510,41 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
 
 }
 
+function deleteLocalPhotoPost(selectedId){
+
+  let responseStatus = isItLocalPost(selectedId);
+	if (responseStatus || responseStatus === 0){
+		lastReceivedPosts.splice(responseStatus, 1);
+	}
+	else{
+		return false;
+	}
+
+	let selectedPhotoPost = document.getElementById(selectedId);
+	if (!selectedPhotoPost){
+		return false;
+	}
+	selectedPhotoPost.parentNode.removeChild(selectedPhotoPost);
+	return true;
+}
+
+function isItLocalPost(selectedId){
+
+	let selectedPhotoPostIndex = lastReceivedPosts.findIndex(function(element){
+			return element.id === selectedId;
+	});
+
+  // return selectedPhotoPostIndex;
+
+	if (selectedPhotoPostIndex !== -1){
+		return selectedPhotoPostIndex;
+	}
+	else{
+		return false;
+	}
+
+}
+
 function getUserProfile(userName) {
   
   return users.find(function(element){
@@ -475,7 +608,8 @@ let lastConfig = {};        //keep last used config
 let stateOfEnvironment = {
   personalPage: null,
   currentUser: 'Alexander Martinchik',
-  pageState: "simple"
+  pageState: "simple",
+  zoomedPhotoPost: null
 };
 
 let hashTagsHint = [

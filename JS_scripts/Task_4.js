@@ -612,6 +612,9 @@ photoPosts.editPhotoPost = function(selectedId, photoPost){
   }
 
   let selectedPost = this.getPhotoPost(selectedId);
+  if (!selectedPost){
+    return false;
+  }
 
   if ('photoLink' in photoPost){
     selectedPost.photoLink = photoPost.photoLink;

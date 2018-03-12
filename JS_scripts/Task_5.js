@@ -1,8 +1,107 @@
+;(function() {
+
 document.addEventListener("click", zoomPhotoPost);
 
 document.addEventListener("click", loadMore);
 
 document.addEventListener("click", removeHandler);
+
+let loadContentStatus = 'maybe there are some things';
+
+let hashTagsHint = [
+
+  "winter",
+  "morning",
+  "forest",
+  "darkness",
+  "happy",
+  "friends"
+
+];
+
+window.addPhotoPost = addPhotoPost;
+window.editPhotoPost = editPhotoPost;
+window.removePhotoPost = removePhotoPost;
+window.preparePage = preparePage;
+window.loadContent = loadContent;
+
+window.lastReceivedPosts = [];
+window.lastConfig = {};
+window.stateOfEnvironment = {
+
+  personalPage: null,         //set user to show personal page
+  currentUser: "Alexander Martinchik",
+  pageState: "simple",
+  zoomedPhotoPost: null
+
+};
+window.users = [
+
+  {
+    user: 'Maksim Talstykh',
+    country: 'Belarus',
+    city: 'Minsk',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  },
+
+  {
+    user: 'Dmitry Shamov',
+    country: 'Japan',
+    city: 'Tokio',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  },
+
+  {
+    user: 'Alexander Martinchik',
+    country: 'Poland',
+    city: 'Warsaw',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  },
+
+  {
+    user: 'Dirk Dallas',
+    country: 'UAE',
+    city: 'Dubai',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  },
+
+  {
+    user: 'Jannik Obenhoff',
+    country: 'Germany',
+    city: 'Munich',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  },
+
+  {
+    user: 'Eric Kimberlin',
+    country: 'USA',
+    city: 'Seattle',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png",
+  },
+
+  {
+    user: 'Ryan Millier',
+    country: 'USA',
+    city: 'New York',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  },
+
+  {
+    user: 'Emilie Ristevski',
+    country: 'Australia',
+    city: 'Sydney',
+    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
+    avatar: "images/cat.png"
+  }
+
+];
 
 function addPhotoPost(photoPost){
 
@@ -10,7 +109,7 @@ function addPhotoPost(photoPost){
     return false;
   }
 
-  let cofig = Object.assign({}, lastConfig);
+  let cofig = Object.assign({}, lastConfig);      //to reload photoPosts
   loadContent(lastReceivedPosts.length, cofig);
 
   return true;
@@ -18,9 +117,11 @@ function addPhotoPost(photoPost){
 }
 
 function removeHandler(event){
+
 	if (event.target.classList.contains("trash-ico")){
 		removePhotoPost();
 	}
+
 }
 
 function editPhotoPost(photoPost, selectedId){
@@ -28,7 +129,6 @@ function editPhotoPost(photoPost, selectedId){
 	selectedId = selectedId || stateOfEnvironment.zoomedPhotoPost;
 
 	let responseStatus = photoPosts.editPhotoPost(selectedId, photoPost);
-	// console.log(responseStatus);
 	if (!responseStatus){
 		return false;
 	}
@@ -48,11 +148,10 @@ function editPhotoPost(photoPost, selectedId){
     console.log("it isn't local photoPost");
   }
 	
-	if (stateOfEnvironment.pageState === "more"){
-		let newPhotoPost = createPhotoPost('more', editedPhotoPost);
-		let oldPhotoPost = document.querySelector(".card-item--zoomed");
-		oldPhotoPost.parentNode.replaceChild(newPhotoPost, oldPhotoPost);
-
+	if (stateOfEnvironment.pageState === "more" && stateOfEnvironment.zoomedPhotoPost === selectedId){
+  	let newPhotoPost = createPhotoPost('more', editedPhotoPost);
+  	let oldPhotoPost = document.querySelector(".card-item--zoomed");
+  	oldPhotoPost.parentNode.replaceChild(newPhotoPost, oldPhotoPost);
 		setPhotoPostPosition(document.querySelector('.card-item--zoomed'));
 	}
 	
@@ -65,13 +164,11 @@ function removePhotoPost(selectedId){
   selectedId = selectedId || stateOfEnvironment.zoomedPhotoPost;
 
   if (!photoPosts.removePhotoPost(selectedId)){
-    console.log("photoPost was deleted or didn't exist");
     return false;
   }
 
   if (!deleteLocalPhotoPost(selectedId)){
     console.log("It isn't local photoPost");
-    // return false;
   }
 
 	if (stateOfEnvironment.pageState === "more"){
@@ -97,7 +194,7 @@ function loadMore(){
 		return false;
 	}
 	
-	var responseStatus = loadContent(3, lastConfig);
+	let responseStatus = loadContent(6, lastConfig);
 
 	if (responseStatus === "Nothing found"){
 		alert("Nothing found");
@@ -136,19 +233,6 @@ function zoomPhotoPost(event){
 
   setPhotoPostPosition(cardItem);
 
-  // let distanceToTheBottom = document.body.scrollHeight - window.pageYOffset;
-  // let top;
-  // if (distanceToTheBottom < cardItem.clientHeight){
-  //   console.log(distanceToTheBottom);
-  //   top = document.body.scrollHeight - cardItem.clientHeight;
-  // }
-  // else{
-  //   top = window.pageYOffset;
-  // }
-  // cardItem.style.top = top + "px";
-  // stateOfEnvironment.pageState = "more";
-  // stateOfEnvironment.zoomedPhotoPost = id;
-
   stateOfEnvironment.pageState = "more";
   stateOfEnvironment.zoomedPhotoPost = id;
 
@@ -159,7 +243,6 @@ function setPhotoPostPosition(cardItem){
 	let distanceToTheBottom = document.body.scrollHeight - window.pageYOffset;
   let top;
   if (distanceToTheBottom < cardItem.clientHeight){
-    // console.log(distanceToTheBottom);
     top = document.body.scrollHeight - cardItem.clientHeight;
   }
   else{
@@ -179,8 +262,6 @@ function preparePage(){
     document.querySelector(".about-user__name").innerHTML = stateOfEnvironment.personalPage;
     document.querySelector(".about-user__description-text").innerHTML = userProfile.aboutYou;
     document.querySelector(".about-user__location").innerHTML = userProfile.country + ", " + userProfile.city;
-
-    // loadContent(9, {author: stateOfEnvironment.personalPage});
   }
   if (stateOfEnvironment.currentUser){
     document.querySelector(".header__login").classList.add("disabled");
@@ -189,16 +270,23 @@ function preparePage(){
     currentUserName.classList.remove("disabled");
     currentUserName.innerHTML = stateOfEnvironment.currentUser.split(' ')[0];   
   }
-  // else{
-  //   document.querySelector(".about-user").classList.add("disabled");
-  // }
 
 }
 
-function loadContent(quantity, filterConfig){       //для load more filterConfig задавать lastConfig, для Edit передавать объект ручками
+function loadContent(quantity, filterConfig){       //for load more filterConfig = lastConfig, for Edit filterConfig = {...}
   
   let skip = lastReceivedPosts.length;
   let receivedPhotoPosts;
+
+  console.log(lastConfig);
+  // if (filterConfig && typeof filterConfig !== 'object'){
+  //   // console.log('piu');
+  //   return false;
+  // }
+
+  // if(Array.isArray(filterConfig)){
+  //   return false;
+  // }
 
   if (!filterConfig){
     filterConfig = {
@@ -206,9 +294,9 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
     };
   }
 
-  if (('hashTags' in filterConfig) !== true){
-    filterConfig.hashTags = [];
-  }
+  // if (('hashTags' in filterConfig) !== true){
+  //   filterConfig.hashTags = [];
+  // }
 
   if (stateOfEnvironment.personalPage){
   	filterConfig.author = stateOfEnvironment.personalPage;
@@ -223,23 +311,23 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
     return false;
   }
 
-  if (skip !== 0 && receivedPhotoPosts.length < quantity){					//danger string!!!!!!!!
+  if (skip !== 0 && receivedPhotoPosts.length < quantity){					//debug information
   	loadContentStatus = "CONTINUE:  it's all";
   }
 
-  if (skip !== 0 && receivedPhotoPosts.length === 0){					//danger string!!!!!!!!
+  if (skip !== 0 && receivedPhotoPosts.length === 0){					//debug information
   	loadContentStatus = "NO MORE";
   }
 
-  if (skip === 0 && receivedPhotoPosts.length < quantity){					//danger string!!!!!!!!
+  if (skip === 0 && receivedPhotoPosts.length < quantity){					//debug information
   	loadContentStatus = "START: it's all";
   }
 
-  if (skip === 0 && receivedPhotoPosts.length === 0){					//danger string!!!!!!!!
+  if (skip === 0 && receivedPhotoPosts.length === 0){					//debug information
   	loadContentStatus = "Nothing found";
   }
 
-  if (receivedPhotoPosts.length === quantity){					//danger string!!!!!!!!
+  if (receivedPhotoPosts.length === quantity){					//debug information
   	loadContentStatus = "maybe there are some things";
   }
 
@@ -248,7 +336,7 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
   }
 
   if (skip !== 0){
-    for (var i = 0; i < receivedPhotoPosts.length; i++) {
+    for (let i = 0; i < receivedPhotoPosts.length; i++) {
       lastReceivedPosts.push(receivedPhotoPosts[i]);
     }
   }
@@ -263,7 +351,6 @@ function loadContent(quantity, filterConfig){       //для load more filterCon
   }
 
   console.log(lastConfig);
-  console.log(lastReceivedPosts);
 
   return loadContentStatus;
 
@@ -385,7 +472,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
 
   for (let i = 0; i < photoPost.hashTags.length; i++){
     let hashtagItem = document.createElement('div');
-    hashtagItem.className = "card-item__hashtag-item selected-hashtag"
+    hashtagItem.className = "card-item__hashtag-item selected-hashtag";
     hashtagItem.innerHTML = photoPost.hashTags[i];
     if (mode === 'edit'){
       let closeIco = document.createElement('i');
@@ -443,7 +530,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   for (let i = 0; i < hashTagsHint.length; i++){
     hashtagItem = document.createElement('div');
     hashtagItem.className = "select-hashtag__hashtag-item hint-hashtag";
-    hashtagItem.innerHTML = hashTagsHint[i]
+    hashtagItem.innerHTML = hashTagsHint[i];
     cardItem__hashtagsContainer.appendChild(hashtagItem);
   }
 
@@ -454,7 +541,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   else{
     titleEditDescription.className = "card-item__title-edit-description disabled";
   }
-  titleEditDescription.innerHTML = "Edit description:"
+  titleEditDescription.innerHTML = "Edit description:";
   cardItem.appendChild(titleEditDescription);
 
   let textarea = document.createElement('textarea');
@@ -537,6 +624,7 @@ function deleteLocalPhotoPost(selectedId){
 	}
 	selectedPhotoPost.parentNode.removeChild(selectedPhotoPost);
 	return true;
+
 }
 
 function isItLocalPost(selectedId){
@@ -544,8 +632,6 @@ function isItLocalPost(selectedId){
 	let selectedPhotoPostIndex = lastReceivedPosts.findIndex(function(element){
 			return element.id === selectedId;
 	});
-
-  // return selectedPhotoPostIndex;
 
 	if (selectedPhotoPostIndex !== -1){
 		return selectedPhotoPostIndex;
@@ -601,7 +687,7 @@ function makeDateBeautiful(date){
   if (day < 10){
     day =  '0' + day;
   }
-  let month = date.getMonth();
+  let month = date.getMonth() + 1;
   if (month < 10){
     month =  '0' + month;
   }
@@ -610,92 +696,4 @@ function makeDateBeautiful(date){
 
 }
 
-let loadContentStatus = 'maybe there are some things';
-
-let lastReceivedPosts = [];       //keep last received post
-
-let lastConfig = {};        //keep last used config
-
-let stateOfEnvironment = {
-  personalPage: null,
-  currentUser: "Alexander Martinchik",
-  pageState: "simple",
-  zoomedPhotoPost: null
-};
-
-let hashTagsHint = [
-  "winter",
-  "morning",
-  "forest",
-  "darkness",
-  "happy",
-  "friends"
-];
-
-let users = [
-
-  {
-    user: 'Maksim Talstykh',
-    country: 'Belarus',
-    city: 'Minsk',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Dmitry Shamov',
-    country: 'Japan',
-    city: 'Tokio',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Alexander Martinchik',
-    country: 'Poland',
-    city: 'Warsaw',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Dirk Dallas',
-    country: 'UAE',
-    city: 'Dubai',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Jannik Obenhoff',
-    country: 'Germany',
-    city: 'Munich',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Eric Kimberlin',
-    country: 'USA',
-    city: 'Seattle',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png",
-  },
-
-  {
-    user: 'Ryan Millier',
-    country: 'USA',
-    city: 'New York',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Emilie Ristevski',
-    country: 'Australia',
-    city: 'Sydney',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  }
-
-];
+}());

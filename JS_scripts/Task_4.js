@@ -34,7 +34,7 @@ let photoPosts = [
 
     hashTags: ['japan','spring'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -52,7 +52,7 @@ let photoPosts = [
 
     hashTags: ['japan','winter'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -160,7 +160,7 @@ let photoPosts = [
 
     hashTags: ['dubai','summer'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -196,7 +196,7 @@ let photoPosts = [
 
     hashTags: ['dubai','winter'],
 
-    likes: ["Maksim Talstykh"]
+    likes: ["Maksim Talstykh", 'Alexander Martinchik']
 
   },
 
@@ -232,7 +232,7 @@ let photoPosts = [
 
     hashTags: ['germany','autumn'],
 
-    likes: ["Maksim Talstykh"]
+    likes: ["Maksim Talstykh", 'Alexander Martinchik']
 
   },
 
@@ -250,7 +250,7 @@ let photoPosts = [
 
     hashTags: ['germany','spring'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -286,7 +286,7 @@ let photoPosts = [
 
     hashTags: ['germany','winter'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -322,7 +322,7 @@ let photoPosts = [
 
     hashTags: ['seattle','summer'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -376,7 +376,7 @@ let photoPosts = [
 
     hashTags: ['new_york','spring'],
 
-    likes: ["Maksim Talstykh"]
+    likes: ["Maksim Talstykh", 'Alexander Martinchik']
 
   },
 
@@ -394,7 +394,7 @@ let photoPosts = [
 
     hashTags: ['new_york','winter'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -430,7 +430,7 @@ let photoPosts = [
 
     hashTags: ['new_york','autumn'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -484,7 +484,7 @@ let photoPosts = [
 
     hashTags: ['australia','spring'],
 
-    likes: []
+    likes: ['Alexander Martinchik']
 
   },
 
@@ -502,7 +502,7 @@ let photoPosts = [
 
     hashTags: ['australia','summer'],
 
-    likes: ["Maksim Talstykh"]
+    likes: ["Maksim Talstykh", 'Alexander Martinchik']
 
   }
 
@@ -645,6 +645,11 @@ photoPosts.editPhotoPost = function(selectedId, photoPost){
 photoPosts.getPhotoPosts = function(skip, top, filterConfig){
 
   if (typeof(skip) !== "number" || typeof(top) !== "number"){
+    return false;
+  }
+
+  if (typeof filterConfig === 'string' && isStringEmpty(filterConfig)){
+    console.log('YES');
     return false;
   }
 

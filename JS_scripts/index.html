@@ -76,6 +76,29 @@
 
 
 <script type="text/javascript">
+
+	//Sort content by date and load 9 photoPosts.
+	//Add 2nd argument with config to filter photoPosts
+	//	loadContent(9, {hashTags: ["winter"]});
 	loadContent(9);
+	//Display userName in header and
+	//show personal page, if personalPage !== null
 	preparePage();
+
+	addPhotoPost({
+		id: '999',
+		description: 'Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat ',
+		createdAt: new Date('2018-12-17T23:00:00'),
+		author: 'Maksim Talstykh',
+		photoLink: 'images/cat.png',
+		hashTags: ['minsk','cat'],
+		likes: ['Alexander Martinchik', 'Dirk Dallas']
+ 	});
+	//Call editPhotoPost without 2nd argument to edit current zoomed photoPost
+	editPhotoPost({photoLink: 'images/cat.png', description: "123"}, '8');
+	//Call removePhotoPost without argument to remove current zoomed photoPost
+	//Return true, false or "It isn't local photoPost" if the post was deleted, but it wasn't displayed
+	removePhotoPost('6');
+	
+
 </script>

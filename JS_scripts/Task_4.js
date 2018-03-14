@@ -536,7 +536,7 @@ photoPosts.validatePhotoPost = function(photoPost){
   if (photoPost === undefined || typeof (photoPost.id) !== "string" || isStringEmpty(photoPost.id)){
     return false;
   }
-  if (typeof (photoPost.description) !== "string" || photoPost.description.length >200 || isStringEmpty(photoPost.description)){
+  if (typeof (photoPost.description) !== "string" || photoPost.description.length > 200 || isStringEmpty(photoPost.description)){
     return false;
   }
 

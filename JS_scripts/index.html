@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="theme-color" content="#529DFF">
-	<meta name="viewport" content="width=device-width, initial-scale=0.888888888888888888889, user-scalable=no"">
+	<meta name="viewport" content="width=device-width, initial-scale=0.888888888888888888889, user-scalable=no">
 	<title>AmAm</title>
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" >
@@ -20,6 +20,7 @@
 			</div>
 			<form class="header__form">
 				<input class="header__input" type="text" name="find-authors" placeholder="Find more authors" />
+				<ul class="header__authors-container shadow disabled"></ul>
 			</form>
 			<div class="header__current-user-container">
 				<div class="header__current-user">
@@ -55,6 +56,106 @@
 
 			<div class="dark-background disabled"></div>
 
+			<div class="login-container disabled">
+				<div class="login__logo-container">
+					<a class="login__logo" href="#"></a>
+				</div>
+				<form class="login__form">
+					<input class="login__login-input" type="text" name="login" placeholder="login">
+					<input class="login__password-input" type="password" name="password" placeholder="password">
+				</form>
+				<div class="login__buttons-container">
+					<div class="button login-button">sign in</div>
+					<span class="login__or">or</span>
+					<div class="button invisible-button">continue as a guest</div>
+				</div>
+			</div>
+
+			<div class="select-hashtag disabled">
+				<div class="select-hashtag__title">Selected #hashtags</div>
+				<div class="select-hashtag__container">
+					<div class="select-hashtag__hashtag-item selected-hashtag">nature<i class="close-ico fas fa-times"></i></div>
+					<div class="select-hashtag__hashtag-item selected-hashtag">summer<i class="close-ico fas fa-times"></i></div>
+					<div class="select-hashtag__hashtag-item selected-hashtag">night<i class="close-ico fas fa-times"></i></div>
+					<div class="select-hashtag__hashtag-item selected-hashtag">japan<i class="close-ico fas fa-times"></i></div>
+					<div class="select-hashtag__hashtag-item selected-hashtag">sunset<i class="close-ico fas fa-times"></i></div>
+					<div class="select-hashtag__hashtag-item selected-hashtag">happy<i class="close-ico fas fa-times"></i></div>
+					<div class="select-hashtag__hashtag-item selected-hashtag">sky<i class="close-ico fas fa-times"></i></div>
+				</div>
+				<div class="select-hashtag__form-container">
+					<form class="select-hashtag__form">
+						<input class="select-hashtag__input" type="text" name="add-hashtag" placeholder="Type #hashtags here"/>
+						<input class="select-hashtag__submit" type="submit" value="Add">
+					</form>
+				</div>
+				<p class="select-hashtag__cheatsheet">There is some examples below. You can add it to selected hashtags by click.</p>
+				<div class="select-hashtag__container">
+					<div class="select-hashtag__hashtag-item hint-hashtag">urban</div>
+					<div class="select-hashtag__hashtag-item hint-hashtag">winter</div>
+					<div class="select-hashtag__hashtag-item hint-hashtag">morning</div>
+					<div class="select-hashtag__hashtag-item hint-hashtag">forest</div>
+					<div class="select-hashtag__hashtag-item hint-hashtag">cars</div>
+					<div class="select-hashtag__hashtag-item hint-hashtag">darkness</div>
+					<div class="select-hashtag__hashtag-item hint-hashtag">building</div>
+				</div>
+				<div class="select-hashtag__button-container">
+					<div class="button narrow-button">Apply filter</div>
+					<div class="button narrow-button">Cancel</div>
+				</div>
+			</div>
+
+			<div class="add-new-card card-item shadow card-item--zoomed disabled">
+					<div class="add-new-card__upload-photo">
+						<div class="button upload-photo">Upload a photo</div>
+					</div>
+					<p class="card-item__title-edit-hashtag">Add #hashtags:</p>
+					<div class="card-item__hashtags-container">
+						<div class="card-item__hashtag-item selected-hashtag">urban<i class="close-ico fas fa-times"></i></div>
+						<div class="card-item__hashtag-item selected-hashtag">winter<i class="close-ico fas fa-times"></i></div>
+					</div>
+					<div class="select-hashtag__form-container card-item__form-editing">
+						<form class="select-hashtag__form">
+							<input class="select-hashtag__input" type="text" name="add-hashtag" placeholder="Type #hashtags here"/>
+							<input class="select-hashtag__submit" type="submit" value="Add">
+						</form>
+					</div>
+					<p class="select-hashtag__cheatsheet card-item__cheatsheet-editing">There is some examples below. You can add it to selected hashtags by click.</p>
+					<div class="card-item__hashtags-container">
+						<div class="select-hashtag__hashtag-item hint-hashtag">urban</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">winter</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">morning</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">forest</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">cars</div>
+					</div>
+					<p class="card-item__title-edit-description">Add description:</p>
+					<textarea class="card-item__textarea" maxlength="200"></textarea>
+					<p class="card-item__description disabled"></p>
+					<div class="card-item__button-container">
+						<div class="button narrow-button close-button disabled">Close</div>
+						<div class="button narrow-button">Publish the card</div>
+						<div class="button narrow-button">Cancel</div>
+					</div>					
+			</div>
+
+			<div class="sort-by__container disabled">
+				<div class="sort-by__title">Sort by:</div>
+				<div class="sort-by__content">
+					<span class="sort-by__sort-mode">Date</span>
+					<ul class="sort-by__select sort-by__select--date">
+						<li class="sort-by__select-item"><i class="selected-ico fa fa-circle" aria-hidden="true"></i>Newest</li>
+						<li class="sort-by__select-item"><i class="unselected-ico fa fa-circle" aria-hidden="true"></i>Oldest</li>
+					</ul>
+					<span class="sort-by__sort-mode">Nickname</span>
+					<ul class="sort-by__select sort-by__select--nickname">
+						<li class="sort-by__select-item"><i class="unselected-ico fa fa-circle" aria-hidden="true"></i>A first</li>
+						<li class="sort-by__select-item"><i class="unselected-ico fa fa-circle" aria-hidden="true"></i>Z first</li>
+					</ul>
+				</div>
+				<div class="card-item__button-container">
+					<div class="button narrow-button close-button">Close</div>
+				</div>
+			</div>
+
 			<section class="cards-container">
 				
 			</section>
@@ -77,15 +178,21 @@
 
 <script type="text/javascript">
 
-	//Sort content by date and load 9 photoPosts.
-	//Add 2nd argument with config to filter photoPosts
-	//	loadContent(9, {hashTags: ["winter"]});
-	loadContent(9);
-	//Display userName in header and
-	//show personal page, if personalPage !== null
-	preparePage();
+	//filter by author is available by clicking the "Find more authors" in the header
 
-	addPhotoPost({
+	//Load 9 photoPosts.
+	//Default: Sort content by date.
+	//Return loadContentStatus;
+	console.log(loadContent(9));
+	//Add 2nd argument with config to filter photoPosts:
+	//	loadContent(9, {hashTags: ["winter"]});
+	
+	//Display userName in the header and
+	//show personal page, if personalPage !== null
+	console.log(preparePage());
+
+	//Add photoPost and reload page with the same filterConfig
+	console.log(addPhotoPost({
 		id: '999',
 		description: 'Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat ',
 		createdAt: new Date('2018-12-17T23:00:00'),
@@ -93,12 +200,27 @@
 		photoLink: 'images/cat.png',
 		hashTags: ['minsk','cat'],
 		likes: ['Alexander Martinchik', 'Dirk Dallas']
- 	});
+ 	}));
+
 	//Call editPhotoPost without 2nd argument to edit current zoomed photoPost
-	editPhotoPost({photoLink: 'images/cat.png', description: "123"}, '8');
-	//Call removePhotoPost without argument to remove current zoomed photoPost
+	console.log(editPhotoPost({photoLink: "images/cat.png", description: "123"}, "8"));
+
+	//Call removePhotoPost without any arguments to remove current zoomed photoPost.
 	//Return true, false or "It isn't local photoPost" if the post was deleted, but it wasn't displayed
-	removePhotoPost('6');
-	
+	console.log(removePhotoPost("6"));
+
+	//Show personal page with user's photos. Example:
+	//	stateOfEnvironment.personalPage = "Jannik Obenhoff";
+	//	preparePage();		//to show block with personal information
+	//	loadContent(9);		//to update photoPost and load user's photos
+
+	//Change current user:
+	stateOfEnvironment.currentUser = "Maksim Talstykh";
+	preparePage();
+	loadContent(9);
+
+	document.querySelector('.header__input').addEventListener("focus", showAuthorsFocus);
+	document.querySelector('.header__input').addEventListener("blur", showAuthorsBlur);
+
 
 </script>

@@ -135,6 +135,7 @@ header{
 	height: 100%;
 	justify-content: center;
 	width: 100%;
+	position: relative;
 }
 
 .header__input{
@@ -144,6 +145,36 @@ header{
 	height: 36px;
 	text-align: center;
 	width: 233px;
+}
+
+.header__authors-container{
+	z-index: 999;
+	background-color: #FFFFFF;
+	overflow: hidden;
+	position: absolute;
+	top: 60px;
+	white-space: nowrap;
+	width: 231px;
+	padding: 0 10px;
+	border: 1px solid #95989A;
+}
+
+.header__list-item{
+	border-top: 1px solid #95989A;
+	padding: 7px 0;
+	list-style-type: none;
+}
+
+.header__author-name{
+	color: #424242;
+	font: 500 18px "Roboto", sans-serif;
+	cursor: pointer;
+	display: inline-block;
+	width: 100%;
+}
+
+.header__list-item:first-child{
+	border: 0;
 }
 
 .header__current-user-container{
@@ -466,7 +497,7 @@ footer{
 	left: 50%;
 	margin-left: -265px;
 	position: absolute;
-	top: 100px;
+	top: 0;
 	width: 530px;
 }
 
@@ -571,6 +602,10 @@ footer{
 
 .error-container__error-code{
 	font: 600 20px "Roboto", sans-serif;
+}
+
+.add-new-card{
+	top: 100px;
 }
 
 .add-new-card__upload-photo{
@@ -796,11 +831,21 @@ footer{
 	.header__input{
 		font: 400 20px "Roboto", sans-serif;
 		height: 45px;
-	}
-
-	.header__input{
 		max-width: 450px;
 		width: 100%;
+	}
+
+	.header__authors-container{
+		max-width: 450px;
+		width: 100%;
+	}
+
+	.header__list-item{
+		padding: 15px 0;
+	}
+
+	.header__author-name{
+		font-size: 22px;
 	}
 
 	.header__current-user{

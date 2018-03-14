@@ -6,9 +6,9 @@ document.addEventListener("click", loadMore);
 
 document.addEventListener("click", removeHandler);
 
-let loadContentStatus = 'maybe there are some things';
+let loadContentStatus = 'maybe there are some things';        //debug information
 
-let hashTagsHint = [
+let hashTagsHint = [      //hint for the edit page
 
   "winter",
   "morning",
@@ -24,18 +24,20 @@ window.editPhotoPost = editPhotoPost;
 window.removePhotoPost = removePhotoPost;
 window.preparePage = preparePage;
 window.loadContent = loadContent;
+window.showAuthorsFocus = showAuthorsFocus;
+window.showAuthorsBlur = showAuthorsBlur;
 
 window.lastReceivedPosts = [];
 window.lastConfig = {};
 window.stateOfEnvironment = {
 
   personalPage: null,         //set user to show personal page
-  currentUser: "Alexander Martinchik",
+  currentUser: 'Alexander Martinchik',
   pageState: "simple",
   zoomedPhotoPost: null
 
 };
-window.users = [
+window.users = [        //information for personal pages
 
   {
     user: 'Maksim Talstykh',
@@ -180,6 +182,8 @@ function removePhotoPost(selectedId){
 	stateOfEnvironment.pageState = "simple";
 	stateOfEnvironment.zoomedPhotoPost = null;
 
+  loadContent(1, lastConfig);
+
 	return true;
 
 }
@@ -196,11 +200,6 @@ function loadMore(){
 	
 	let responseStatus = loadContent(6, lastConfig);
 
-	if (responseStatus === "Nothing found"){
-		alert("Nothing found");
-		return true;
-	}
-
 	if (responseStatus === "NO MORE"){
 		alert("NO MORE");
 		return true;
@@ -212,10 +211,14 @@ function zoomPhotoPost(event){
 
   target = event.target;
   let photoPost;
-  if (!target.classList.contains("card-item__photo") && !target.classList.contains("close-button")){
+  if (!target.classList.contains("card-item__photo") && !target.classList.contains("close-button") ){
     return false;
   }
   photoPost = target.closest(".card-item");
+  if (!photoPost){
+    console.log("YO!");
+    return false;
+  }
 
   document.querySelector(".dark-background").classList.toggle("disabled");
 
@@ -271,6 +274,8 @@ function preparePage(){
     currentUserName.innerHTML = stateOfEnvironment.currentUser.split(' ')[0];   
   }
 
+  return true;
+
 }
 
 function loadContent(quantity, filterConfig){       //for load more filterConfig = lastConfig, for Edit filterConfig = {...}
@@ -278,25 +283,13 @@ function loadContent(quantity, filterConfig){       //for load more filterConfig
   let skip = lastReceivedPosts.length;
   let receivedPhotoPosts;
 
-  console.log(lastConfig);
-  // if (filterConfig && typeof filterConfig !== 'object'){
-  //   // console.log('piu');
-  //   return false;
-  // }
-
-  // if(Array.isArray(filterConfig)){
-  //   return false;
-  // }
+  // console.log(lastConfig);
 
   if (!filterConfig){
     filterConfig = {
       hashTags: []
     };
   }
-
-  // if (('hashTags' in filterConfig) !== true){
-  //   filterConfig.hashTags = [];
-  // }
 
   if (stateOfEnvironment.personalPage){
   	filterConfig.author = stateOfEnvironment.personalPage;
@@ -350,9 +343,55 @@ function loadContent(quantity, filterConfig){       //for load more filterConfig
     appendPhotoPost (receivedPhotoPosts[i]);
   }
 
-  console.log(lastConfig);
+  // console.log(lastConfig);
 
   return loadContentStatus;
+
+}
+
+function showAuthorsFocus(){
+
+  target = this;
+  this.placeholder = '';
+  let container = document.querySelector(".header__authors-container");
+  container.classList.toggle("disabled");
+  deleteChildren(container);
+  showAuthors();
+
+}
+
+function showAuthorsBlur(){
+
+  target = this;
+  target.placeholder = 'Find more authors';
+  document.querySelector(".header__authors-container").classList.toggle("disabled");
+
+}
+
+function showAuthors(){
+
+  let authors = getAuthors(users, 5);
+  for (let i = 0; i < authors.length; i++){
+    let authorItem = document.createElement("li");
+    authorItem.className = "header__list-item";
+    let authorName = document.createElement("span");
+    authorName.className = "header__author-name";
+    authorName.innerHTML = users[i].user;
+    authorItem.appendChild(authorName);
+    document.querySelector(".header__authors-container").appendChild(authorItem);
+  }
+
+}
+
+function getAuthors(users, quantity){
+
+  quantity = quantity || 5;
+
+  let authors = [];
+  for (var i = 0; i < quantity; i++){
+    authors[i] = users[i].user;
+  }
+  return authors;
 
 }
 
@@ -384,7 +423,6 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
     cardItem.setAttribute("id", photoPost.id);
   }
   
-
   let cardItem__photo = document.createElement('img');
   cardItem__photo.className = "card-item__photo";
   let imgSource = photoPost.photoLink;
@@ -630,7 +668,7 @@ function deleteLocalPhotoPost(selectedId){
 function isItLocalPost(selectedId){
 
 	let selectedPhotoPostIndex = lastReceivedPosts.findIndex(function(element){
-			return element.id === selectedId;
+		return element.id === selectedId;
 	});
 
 	if (selectedPhotoPostIndex !== -1){
@@ -653,7 +691,7 @@ function getUserProfile(userName) {
 function deleteChildren(node){
 
   while (node.firstChild){ 
-  node.removeChild(node.firstChild); 
+    node.removeChild(node.firstChild); 
   }
 
 }

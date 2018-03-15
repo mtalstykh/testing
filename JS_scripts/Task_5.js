@@ -174,7 +174,7 @@ function removePhotoPost(selectedId){
   }
 
 	if (stateOfEnvironment.pageState === "more"){
-		let zoomed__card = document.querySelector(".card-item--zoomed");
+		let zoomed__card = document.querySelector(".card-item--zoomed:not(.add-new-card)");
 		zoomed__card.parentNode.removeChild(zoomed__card);
 		document.querySelector(".dark-background").classList.toggle("disabled");
 	}
@@ -216,7 +216,7 @@ function zoomPhotoPost(event){
   }
   photoPost = target.closest(".card-item");
   if (!photoPost){
-    console.log("YO!");
+    console.log("YO");
     return false;
   }
 

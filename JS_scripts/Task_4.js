@@ -1,537 +1,34 @@
 let photoPosts = (function () {
 
-let photoPosts = [
+function removePhotoPost (selectedId){
 
-  {
+  let photoPosts = getPhotoPostsFromLocalSorage();
 
-    id: '8',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-12-26T23:00:00'),
-
-    author: 'Dmitry Shamov',
-
-    photoLink: 'images/1.jpg',
-
-    hashTags: ['japan','summer'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '19',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-08-13T23:00:00'),
-
-    author: 'Dmitry Shamov',
-
-    photoLink: 'images/2.jpg',
-
-    hashTags: ['japan','spring'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '1',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-10-16T23:00:00'),
-
-    author: 'Dmitry Shamov',
-
-    photoLink: 'images/3.jpg',
-
-    hashTags: ['japan','winter'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '9',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-10-24T23:00:00'),
-
-    author: 'Dmitry Shamov',
-
-    photoLink: 'images/4.jpg',
-
-    hashTags: ['japan','autumn'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '12',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-01-22T23:00:00'),
-
-    author: 'Alexander Martinchik',
-
-    photoLink: 'images/5.jpg',
-
-    hashTags: ['poland','summer'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '7',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-08-15T23:00:00'),
-
-    author: 'Alexander Martinchik',
-
-    photoLink: 'images/6.jpg',
-
-    hashTags: ['poland','spring'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '23',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-05-16T23:00:00'),
-
-    author: 'Alexander Martinchik',
-
-    photoLink: 'images/7.jpg',
-
-    hashTags: ['poland','winter'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '25',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-10-10T23:00:00'),
-
-    author: 'Alexander Martinchik',
-
-    photoLink: 'images/8.jpg',
-
-    hashTags: ['poland','autumn'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '4',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-02-20T23:00:00'),
-
-    author: 'Dirk Dallas',
-
-    photoLink: 'images/9.jpg',
-
-    hashTags: ['dubai','summer'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '14',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-02-03T23:00:00'),
-
-    author: 'Dirk Dallas',
-
-    photoLink: 'images/10.jpg',
-
-    hashTags: ['dubai','spring'],
-
-    likes: []
-
-  },
-
-  {
-
-    id: '17',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-07-28T23:00:00'),
-
-    author: 'Dirk Dallas',
-
-    photoLink: 'images/11.jpg',
-
-    hashTags: ['dubai','winter'],
-
-    likes: ["Maksim Talstykh", 'Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '5',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-10-21T23:00:00'),
-
-    author: 'Dirk Dallas',
-
-    photoLink: 'images/12.jpg',
-
-    hashTags: ['dubai','autumn'],
-
-    likes: []
-
-  },
-
-  {
-
-    id: '11',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-02-27T23:00:00'),
-
-    author: 'Jannik Obenhoff',
-
-    photoLink: 'images/13.jpg',
-
-    hashTags: ['germany','autumn'],
-
-    likes: ["Maksim Talstykh", 'Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '6',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-03-18T23:00:00'),
-
-    author: 'Jannik Obenhoff',
-
-    photoLink: 'images/14.jpg',
-
-    hashTags: ['germany','spring'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '2',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-02-02T23:00:00'),
-
-    author: 'Jannik Obenhoff',
-
-    photoLink: 'images/15.jpg',
-
-    hashTags: ['germany','summer'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '18',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-12-06T23:00:00'),
-
-    author: 'Jannik Obenhoff',
-
-    photoLink: 'images/16.jpg',
-
-    hashTags: ['germany','winter'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '27',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-01-11T23:00:00'),
-
-    author: 'Eric Kimberlin',
-
-    photoLink: 'images/17.jpg',
-
-    hashTags: ['seattle','winter'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '21',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-01-05T23:00:00'),
-
-    author: 'Eric Kimberlin',
-
-    photoLink: 'images/18.jpg',
-
-    hashTags: ['seattle','summer'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '28',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-12-17T23:00:00'),
-
-    author: 'Eric Kimberlin',
-
-    photoLink: 'images/19.jpg',
-
-    hashTags: ['seattle','autumn'],
-
-    likes: []
-
-  },
-
-  {
-
-    id: '3',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-06-14T23:00:00'),
-
-    author: 'Eric Kimberlin',
-
-    photoLink: 'images/20.jpg',
-
-    hashTags: ['seattle','spring'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '20',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-09-04T23:00:00'),
-
-    author: 'Ryan Millier',
-
-    photoLink: 'images/21.jpg',
-
-    hashTags: ['new_york','spring'],
-
-    likes: ["Maksim Talstykh", 'Alexander Martinchik']
-
-  },
-
-  {
-
-  id: '10',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-05-25T23:00:00'),
-
-    author: 'Ryan Millier',
-
-    photoLink: 'images/22.jpg',
-
-    hashTags: ['new_york','winter'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '15',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-07-23T23:00:00'),
-
-    author: 'Ryan Millier',
-
-    photoLink: 'images/23.jpg',
-
-    hashTags: ['new_york','summer'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '22',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-02-07T23:00:00'),
-
-    author: 'Ryan Millier',
-
-    photoLink: 'images/24.jpg',
-
-    hashTags: ['new_york','autumn'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '24',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-04-12T23:00:00'),
-
-    author: 'Emilie Ristevski',
-
-    photoLink: 'images/25.jpg',
-
-    hashTags: ['australia','autumn'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '16',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-09-09T23:00:00'),
-
-    author: 'Emilie Ristevski',
-
-    photoLink: 'images/26.jpg',
-
-    hashTags: ['australia','winter'],
-
-    likes: ["Maksim Talstykh"]
-
-  },
-
-  {
-
-    id: '13',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-08-09T23:00:00'),
-
-    author: 'Emilie Ristevski',
-
-    photoLink: 'images/27.jpg',
-
-    hashTags: ['australia','spring'],
-
-    likes: ['Alexander Martinchik']
-
-  },
-
-  {
-
-    id: '26',
-
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos nobis, quidem fuga distinctio. Quis consectetur ab earum impedit, tenetur officiis.',
-
-    createdAt: new Date('2018-08-01T23:00:00'),
-
-    author: 'Emilie Ristevski',
-
-    photoLink: 'images/28.jpg',
-
-    hashTags: ['australia','summer'],
-
-    likes: ["Maksim Talstykh", 'Alexander Martinchik']
-
-  }
-
-];
-
-photoPosts.removePhotoPost = function(selectedId){
-
-  for (let i = 0; i < this.length; i++){
-    if (this[i].id === selectedId){
-      this.splice(i, 1);
+  for (let i = 0; i < photoPosts.length; i++){
+    if (photoPosts[i].id === selectedId){
+      photoPosts.splice(i, 1);
+      localStorage.setItem("photoPosts", JSON.stringify(photoPosts));
       return true;
     }
   }
   return false;
 
-};
+}
 
-photoPosts.getPhotoPost = function(selectedId){
+function getPhotoPost (selectedId){
 
-  for (let i = 0; i < this.length; i++){
-    if (this[i].id === selectedId){
-      return this[i];
+  let photoPosts = getPhotoPostsFromLocalSorage();
+
+  for (let i = 0; i < photoPosts.length; i++){
+    if (photoPosts[i].id === selectedId){
+      return photoPosts[i];
     }
   }
   return false;
 
-};
+}
 
-photoPosts.validatePhotoPost = function(photoPost){
+function validatePhotoPost (photoPost){
 
   if (photoPost === undefined || typeof (photoPost.id) !== "string" || isStringEmpty(photoPost.id)){
     return false;
@@ -574,9 +71,11 @@ photoPosts.validatePhotoPost = function(photoPost){
 
   return true;
 
-};
+}
 
-photoPosts.addPhotoPost = function(photoPost){
+function addPhotoPost (photoPost){
+
+  let photoPosts = getPhotoPostsFromLocalSorage();
   
   if (!photoPost || typeof photoPost !== "object") return false;
   if (photoPost instanceof Array){
@@ -585,23 +84,24 @@ photoPosts.addPhotoPost = function(photoPost){
   if (!photoPost.hashTags){
     return false;
   }
-  for (let i = 0; i < this.length; i++){
-    if (this[i].id === photoPost.id){
+  for (let i = 0; i < photoPosts.length; i++){
+    if (photoPosts[i].id === photoPost.id){
       return false;
     }
   }
 
   photoPost = hashTagsToLowerCase(photoPost);
 
-  if (!this.validatePhotoPost(photoPost)){
+  if (!validatePhotoPost(photoPost)){
     return false;
   }
-  this.push(photoPost);
+  photoPosts.push(photoPost);
+  localStorage.setItem("photoPosts", JSON.stringify(photoPosts));
   return true;
   
-};
+}
 
-photoPosts.editPhotoPost = function(selectedId, photoPost){
+function editPhotoPost (selectedId, photoPost){
 
   if (!photoPost) return false;
 
@@ -640,9 +140,9 @@ photoPosts.editPhotoPost = function(selectedId, photoPost){
 
   return true;
 
-};
+}
 
-photoPosts.getPhotoPosts = function(skip, top, filterConfig){
+function getPhotoPosts (skip, top, filterConfig){
 
   if (typeof(skip) !== "number" || typeof(top) !== "number"){
     return false;
@@ -707,9 +207,9 @@ photoPosts.getPhotoPosts = function(skip, top, filterConfig){
   filteredPosts = filteredPosts.splice(skip, top);
   return filteredPosts;
 
-};
+}
 
-sortByAuthor = function(sort_mode, object){
+function sortByAuthor (sort_mode, object){
 
   function compareAuthors_AZ(a, b){
 
@@ -732,9 +232,9 @@ sortByAuthor = function(sort_mode, object){
     return object.sort(compareAuthors_ZA);
   }
 
-};
+}
 
-sortByDate = function(sort_mode, object){
+function sortByDate (sort_mode, object){
 
   function compareDate_newFirst(a, b){
 
@@ -765,7 +265,7 @@ sortByDate = function(sort_mode, object){
     return object.sort(compareDate_oldFirst);
   }
 
-};
+}
 
 function isBContainsA(a,b){ // is B contains A
 
@@ -1160,6 +660,13 @@ function validateBeforeEdit(photoPost) {
 // console.log(wrong_date); 
 // console.log(photoPosts.validatePhotoPost(wrong_date));
 
-return photoPosts;
+return {
+  "removePhotoPost": removePhotoPost,
+  "getPhotoPost": getPhotoPost,
+  "validatePhotoPost": validatePhotoPost,
+  "addPhotoPost": addPhotoPost,
+  "editPhotoPost": editPhotoPost,
+  "getPhotoPosts": getPhotoPosts
+};
 
 }());

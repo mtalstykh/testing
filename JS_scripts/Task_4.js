@@ -1,5 +1,29 @@
 let photoPosts = (function () {
 
+function likeThePost (selectedId){
+
+  let photoPost = photoPosts.getPhotoPost(selectedId);
+
+  let likeStatus = photoPost.likes.findIndex(function(element){
+    return element === stateOfEnvironment.currentUser;
+  });
+
+  if (likeStatus === -1)
+  {
+    photoPost.likes.push(stateOfEnvironment.currentUser);
+  }
+  else{
+    photoPost.likes.splice(likeStatus, 1);
+  }
+
+  removePhotoPost(selectedId);
+  let photoPostsFromStorage = getPhotoPostsFromLocalSorage();
+  photoPostsFromStorage.push(photoPost);
+  localStorage.setItem("photoPosts", JSON.stringify(photoPostsFromStorage));
+  return likeStatus;
+
+}
+
 function removePhotoPost (selectedId){
 
   let photoPosts = getPhotoPostsFromLocalSorage();
@@ -117,7 +141,7 @@ function editPhotoPost (selectedId, photoPost){
     return false;
   }
 
-  let selectedPost = this.getPhotoPost(selectedId);
+  let selectedPost = photoPosts.getPhotoPost(selectedId);
   if (!selectedPost){
     return false;
   }
@@ -138,11 +162,18 @@ function editPhotoPost (selectedId, photoPost){
     selectedPost.likes = photoPost.likes;
   }
 
+  removePhotoPost(selectedId);
+  let photoPostsFromStorage = getPhotoPostsFromLocalSorage();
+  photoPostsFromStorage.push(selectedPost);
+  localStorage.setItem("photoPosts", JSON.stringify(photoPostsFromStorage));
+
   return true;
 
 }
 
 function getPhotoPosts (skip, top, filterConfig){
+
+  let photoPostsFromStorage = getPhotoPostsFromLocalSorage();
 
   if (typeof(skip) !== "number" || typeof(top) !== "number"){
     return false;
@@ -171,18 +202,18 @@ function getPhotoPosts (skip, top, filterConfig){
     filterConfig = hashTagsToLowerCase(filterConfig);
   }
 
-  for (let i = 0; i < this.length; i++) {
+  for (let i = 0; i < photoPostsFromStorage.length; i++) {
     filterFlag = true;
     for (let key in filterConfig) {
-      if (!this[i][key] || key==='hashTags') continue;
-      if (filterConfig[key] != this[i][key]){
+      if (!photoPostsFromStorage[i][key] || key==='hashTags') continue;
+      if (filterConfig[key] != photoPostsFromStorage[i][key]){
         filterFlag = false;
       }
       break;
     }
 
-    if (filterFlag && isBContainsA(filterConfig.hashTags,this[i].hashTags)){
-      filteredPosts.push(this[i]);
+    if (filterFlag && isBContainsA(filterConfig.hashTags, photoPostsFromStorage[i].hashTags)){
+      filteredPosts.push(photoPostsFromStorage[i]);
     }
   }
 
@@ -666,7 +697,8 @@ return {
   "validatePhotoPost": validatePhotoPost,
   "addPhotoPost": addPhotoPost,
   "editPhotoPost": editPhotoPost,
-  "getPhotoPosts": getPhotoPosts
+  "getPhotoPosts": getPhotoPosts,
+  "likeThePost": likeThePost
 };
 
 }());

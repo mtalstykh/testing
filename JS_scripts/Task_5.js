@@ -6,6 +6,8 @@ document.addEventListener("click", loadMore);
 
 document.addEventListener("click", removeHandler);
 
+document.addEventListener("click", likeHandler);
+
 let loadContentStatus = 'maybe there are some things';        //debug information
 
 let hashTagsHint = [      //hint for the edit page
@@ -205,6 +207,55 @@ function loadMore(){
 		return true;
 	}
 
+}
+
+function likeHandler(){
+
+  target = event.target;
+  if (!target.classList.contains("fa-heart")){
+    return false;
+  }
+
+  let photoPost = target.closest(".card-item");
+
+  if (!stateOfEnvironment.zoomedPhotoPost){
+    selectedId = photoPost.getAttribute("id");
+  }
+  else{
+    selectedId = stateOfEnvironment.zoomedPhotoPost;
+  }
+
+  let likeIndexInLikesArray = photoPosts.likeThePost(selectedId);
+
+  let smallPhotoPost = document.getElementById(selectedId);
+  let likeIco = smallPhotoPost.querySelector(".fa-heart");
+
+  let indexOfLocalPost = lastReceivedPosts.findIndex(function(element){
+    return element.id === selectedId;
+  });
+
+  if (likeIndexInLikesArray === -1){
+    likeIco.className = "liked-ico fas fa-heart";
+    lastReceivedPosts[indexOfLocalPost].likes.push(stateOfEnvironment.currentUser);
+  }
+  else{
+    likeIco.className = "not-liked-ico far fa-heart";
+    lastReceivedPosts[indexOfLocalPost].likes.splice(likeIndexInLikesArray, 1);
+  }
+
+  if (stateOfEnvironment.zoomedPhotoPost){
+    if (likeIndexInLikesArray === -1){
+      target.className = "liked-ico fas fa-heart";
+    }
+    else{
+      target.className = "not-liked-ico far fa-heart"; 
+    }
+  }
+
+  
+
+  console.log(indexOfLocalPost);
+ 
 }
 
 function zoomPhotoPost(event){

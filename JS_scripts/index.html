@@ -179,49 +179,18 @@
 
 <script type="text/javascript">
 
-	//filter by author is available by clicking the "Find more authors" in the header
-
-	//Load 9 photoPosts.
-	//Default: Sort content by date.
-	//Return loadContentStatus;
 	console.log(loadContent(9));
-	//Add 2nd argument with config to filter photoPosts:
-	//	loadContent(9, {hashTags: ["winter"]});
 	
-	//Display userName in the header and
-	//show personal page, if personalPage !== null
 	console.log(preparePage());
 
-	//Add photoPost and reload page with the same filterConfig
-	// console.log(addPhotoPost({
-	// 	id: '999',
-	// 	description: 'Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat Cat ',
-	// 	createdAt: new Date('2018-12-17T23:00:00'),
-	// 	author: 'Maksim Talstykh',
-	// 	photoLink: 'images/cat.png',
-	// 	hashTags: ['minsk','cat'],
-	// 	likes: ['Alexander Martinchik', 'Dirk Dallas']
- // 	}));
+	let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+	stateOfEnvironment.currentUser = "Alexander Martinchik";
+  	localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+	preparePage();
+	loadContent(9);
 
-	// //Call editPhotoPost without 2nd argument to edit current zoomed photoPost
-	// console.log(editPhotoPost({photoLink: "images/cat.png", description: "123"}, "8"));
-
-	// //Call removePhotoPost without any arguments to remove current zoomed photoPost.
-	// //Return true, false or "It isn't local photoPost" if the post was deleted, but it wasn't displayed
-	// console.log(removePhotoPost("6"));
-
-	// //Show personal page with user's photos. Example:
-	// //	stateOfEnvironment.personalPage = "Jannik Obenhoff";
-	// //	preparePage();		//to show block with personal information
-	// //	loadContent(9);		//to update photoPost and load user's photos
-
-	// //Change current user:
-	// stateOfEnvironment.currentUser = "Maksim Talstykh";
-	// preparePage();
-	// loadContent(9);
-
-	// document.querySelector('.header__input').addEventListener("focus", showAuthorsFocus);
-	// document.querySelector('.header__input').addEventListener("blur", showAuthorsBlur);
+	document.querySelector('.header__input').addEventListener("focus", showAuthorsFocus);
+	document.querySelector('.header__input').addEventListener("blur", showAuthorsBlur);
 
 
 </script>

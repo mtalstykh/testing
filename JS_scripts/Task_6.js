@@ -1,3 +1,8 @@
+
+// getPostsFromJSON();
+getUsersFromJSON();
+getStateOfEnvironmentFromJSON();
+
 function getPostsFromJSON (){
 
 	let xmlhttp = new XMLHttpRequest();
@@ -29,5 +34,53 @@ function parceDateFromJSON(jsonObject){
 	for (let i = 0; i < jsonObject.length; i++){
 		jsonObject[i].createdAt = new Date (jsonObject[i].createdAt);
 	}
+
+}
+
+function getUsersFromJSON () {
+
+	let xmlhttp = new XMLHttpRequest();
+	let url = "users.json?1";
+	let receivedJSON = null;
+
+	xmlhttp.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+	    receivedJSON = this.responseText;
+	    localStorage.setItem("users", receivedJSON);
+	  }
+	};
+	xmlhttp.open("GET", url, true);
+	xmlhttp.send();
+
+}
+
+function getUsersFromLocalSorage(){
+
+	let users = JSON.parse(localStorage.getItem("users"));
+	return users;
+
+}
+
+function getStateOfEnvironmentFromJSON (){
+
+	let xmlhttp = new XMLHttpRequest();
+	let url = "stateOfEnvironment.json?1";
+	let receivedJSON = null;
+
+	xmlhttp.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+	    receivedJSON = this.responseText;
+	    localStorage.setItem("stateOfEnvironment", receivedJSON);
+	  }
+	};
+	xmlhttp.open("GET", url, true);
+	xmlhttp.send();
+
+}
+
+function getStateOfEnvironmentFromLocalSorage(){
+
+	let stateOfEnvironment = JSON.parse(localStorage.getItem("stateOfEnvironment"));
+	return stateOfEnvironment;
 
 }

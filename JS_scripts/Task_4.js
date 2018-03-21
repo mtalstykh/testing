@@ -5,12 +5,12 @@ function likeThePost (selectedId){
   let photoPost = photoPosts.getPhotoPost(selectedId);
 
   let likeStatus = photoPost.likes.findIndex(function(element){
-    return element === stateOfEnvironment.currentUser;
+    return element === getStateOfEnvironmentFromLocalSorage().currentUser;
   });
 
   if (likeStatus === -1)
   {
-    photoPost.likes.push(stateOfEnvironment.currentUser);
+    photoPost.likes.push(getStateOfEnvironmentFromLocalSorage().currentUser);
   }
   else{
     photoPost.likes.splice(likeStatus, 1);

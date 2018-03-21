@@ -31,81 +31,6 @@ window.showAuthorsBlur = showAuthorsBlur;
 
 window.lastReceivedPosts = [];
 window.lastConfig = {};
-window.stateOfEnvironment = {
-
-  personalPage: null,         //set user to show personal page
-  currentUser: 'Alexander Martinchik',
-  pageState: "simple",
-  zoomedPhotoPost: null
-
-};
-window.users = [        //information for personal pages
-
-  {
-    user: 'Maksim Talstykh',
-    country: 'Belarus',
-    city: 'Minsk',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Dmitry Shamov',
-    country: 'Japan',
-    city: 'Tokio',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Alexander Martinchik',
-    country: 'Poland',
-    city: 'Warsaw',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Dirk Dallas',
-    country: 'UAE',
-    city: 'Dubai',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Jannik Obenhoff',
-    country: 'Germany',
-    city: 'Munich',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Eric Kimberlin',
-    country: 'USA',
-    city: 'Seattle',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png",
-  },
-
-  {
-    user: 'Ryan Millier',
-    country: 'USA',
-    city: 'New York',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  },
-
-  {
-    user: 'Emilie Ristevski',
-    country: 'Australia',
-    city: 'Sydney',
-    aboutYou: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, ex possimus, aliquid repudiandae maiores soluta in.',
-    avatar: "images/cat.png"
-  }
-
-];
 
 function addPhotoPost(photoPost){
 
@@ -130,7 +55,7 @@ function removeHandler(event){
 
 function editPhotoPost(photoPost, selectedId){
 
-	selectedId = selectedId || stateOfEnvironment.zoomedPhotoPost;
+	selectedId = selectedId || getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost;
 
 	let responseStatus = photoPosts.editPhotoPost(selectedId, photoPost);
 	if (!responseStatus){
@@ -152,7 +77,7 @@ function editPhotoPost(photoPost, selectedId){
     console.log("it isn't local photoPost");
   }
 	
-	if (stateOfEnvironment.pageState === "more" && stateOfEnvironment.zoomedPhotoPost === selectedId){
+	if (getStateOfEnvironmentFromLocalSorage().pageState === "more" && getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost === selectedId){
   	let newPhotoPost = createPhotoPost('more', editedPhotoPost);
   	let oldPhotoPost = document.querySelector(".card-item--zoomed");
   	oldPhotoPost.parentNode.replaceChild(newPhotoPost, oldPhotoPost);
@@ -165,7 +90,7 @@ function editPhotoPost(photoPost, selectedId){
 
 function removePhotoPost(selectedId){
 
-  selectedId = selectedId || stateOfEnvironment.zoomedPhotoPost;
+  selectedId = selectedId || getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost;
 
   if (!photoPosts.removePhotoPost(selectedId)){
     return false;
@@ -175,14 +100,16 @@ function removePhotoPost(selectedId){
     console.log("It isn't local photoPost");
   }
 
-	if (stateOfEnvironment.pageState === "more"){
+	if (getStateOfEnvironmentFromLocalSorage().pageState === "more"){
 		let zoomed__card = document.querySelector(".card-item--zoomed:not(.add-new-card)");
 		zoomed__card.parentNode.removeChild(zoomed__card);
 		document.querySelector(".dark-background").classList.toggle("disabled");
 	}
 
+  let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
 	stateOfEnvironment.pageState = "simple";
 	stateOfEnvironment.zoomedPhotoPost = null;
+  localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
 
   loadContent(1, lastConfig);
 
@@ -218,11 +145,11 @@ function likeHandler(){
 
   let photoPost = target.closest(".card-item");
 
-  if (!stateOfEnvironment.zoomedPhotoPost){
+  if (!getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost){
     selectedId = photoPost.getAttribute("id");
   }
   else{
-    selectedId = stateOfEnvironment.zoomedPhotoPost;
+    selectedId = getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost;
   }
 
   let likeIndexInLikesArray = photoPosts.likeThePost(selectedId);
@@ -236,14 +163,14 @@ function likeHandler(){
 
   if (likeIndexInLikesArray === -1){
     likeIco.className = "liked-ico fas fa-heart";
-    lastReceivedPosts[indexOfLocalPost].likes.push(stateOfEnvironment.currentUser);
+    lastReceivedPosts[indexOfLocalPost].likes.push(getStateOfEnvironmentFromLocalSorage().currentUser);
   }
   else{
     likeIco.className = "not-liked-ico far fa-heart";
     lastReceivedPosts[indexOfLocalPost].likes.splice(likeIndexInLikesArray, 1);
   }
 
-  if (stateOfEnvironment.zoomedPhotoPost){
+  if (getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost){
     if (likeIndexInLikesArray === -1){
       target.className = "liked-ico fas fa-heart";
     }
@@ -251,8 +178,6 @@ function likeHandler(){
       target.className = "not-liked-ico far fa-heart"; 
     }
   }
-
-  
 
   console.log(indexOfLocalPost);
  
@@ -275,8 +200,8 @@ function zoomPhotoPost(event){
 
   if (photoPost.classList.contains("card-item--zoomed")){
     document.querySelector(".main-content-wrapper").removeChild(photoPost);
-    stateOfEnvironment.pageState = 'simple';
-    stateOfEnvironment.zoomedPhotoPost = null;
+    getStateOfEnvironmentFromLocalSorage().pageState = 'simple';
+    getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost = null;
     return true;
   }
 
@@ -287,8 +212,10 @@ function zoomPhotoPost(event){
 
   setPhotoPostPosition(cardItem);
 
+  let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
   stateOfEnvironment.pageState = "more";
   stateOfEnvironment.zoomedPhotoPost = id;
+  localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
 
 }
 
@@ -308,21 +235,21 @@ function setPhotoPostPosition(cardItem){
 
 function preparePage(){
 
-  if (stateOfEnvironment.personalPage){
+  if (getStateOfEnvironmentFromLocalSorage().personalPage){
     document.querySelector(".about-user").classList.remove("disabled");
 
-    let userProfile = getUserProfile(stateOfEnvironment.personalPage);
+    let userProfile = getUserProfile(getStateOfEnvironmentFromLocalSorage().personalPage);
     document.querySelector(".about-user__avatar").setAttribute("src", userProfile.avatar);
-    document.querySelector(".about-user__name").innerHTML = stateOfEnvironment.personalPage;
+    document.querySelector(".about-user__name").innerHTML = getStateOfEnvironmentFromLocalSorage().personalPage;
     document.querySelector(".about-user__description-text").innerHTML = userProfile.aboutYou;
     document.querySelector(".about-user__location").innerHTML = userProfile.country + ", " + userProfile.city;
   }
-  if (stateOfEnvironment.currentUser){
+  if (getStateOfEnvironmentFromLocalSorage().currentUser){
     document.querySelector(".header__login").classList.add("disabled");
     document.querySelector(".header__logout").classList.remove("disabled");
     let currentUserName = document.querySelector(".header__current-user-name");
     currentUserName.classList.remove("disabled");
-    currentUserName.innerHTML = stateOfEnvironment.currentUser.split(' ')[0];   
+    currentUserName.innerHTML = getStateOfEnvironmentFromLocalSorage().currentUser.split(' ')[0];   
   }
 
   return true;
@@ -342,8 +269,8 @@ function loadContent(quantity, filterConfig){       //for load more filterConfig
     };
   }
 
-  if (stateOfEnvironment.personalPage){
-  	filterConfig.author = stateOfEnvironment.personalPage;
+  if (getStateOfEnvironmentFromLocalSorage().personalPage){
+  	filterConfig.author = getStateOfEnvironmentFromLocalSorage().personalPage;
   }
 
   if(filterConfig !== lastConfig){
@@ -421,13 +348,13 @@ function showAuthorsBlur(){
 
 function showAuthors(){
 
-  let authors = getAuthors(users, 5);
+  let authors = getAuthors(getUsersFromLocalSorage, 5);
   for (let i = 0; i < authors.length; i++){
     let authorItem = document.createElement("li");
     authorItem.className = "header__list-item";
     let authorName = document.createElement("span");
     authorName.className = "header__author-name";
-    authorName.innerHTML = users[i].user;
+    authorName.innerHTML = getUsersFromLocalSorage()[i].user;
     authorItem.appendChild(authorName);
     document.querySelector(".header__authors-container").appendChild(authorItem);
   }
@@ -440,7 +367,7 @@ function getAuthors(users, quantity){
 
   let authors = [];
   for (var i = 0; i < quantity; i++){
-    authors[i] = users[i].user;
+    authors[i] = users()[i].user;
   }
   return authors;
 
@@ -512,7 +439,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   cardItem__controlButtons.className = "card-item__control-buttons";
   cardItem__subtitle.appendChild(cardItem__controlButtons);
 
-  if (isUserLikedThePhoto(stateOfEnvironment.currentUser, photoPost)){
+  if (isUserLikedThePhoto(getStateOfEnvironmentFromLocalSorage().currentUser, photoPost)){
     let likedIco = document.createElement('i');
     likedIco.className = "liked-ico fas fa-heart";
     cardItem__controlButtons.appendChild(likedIco);
@@ -524,7 +451,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   }
 
   let editIco = document.createElement('i');
-  if (mode === 'simple' || stateOfEnvironment.currentUser !== photoPost.author){
+  if (mode === 'simple' || getStateOfEnvironmentFromLocalSorage().currentUser !== photoPost.author){
     editIco.className = "edit-ico fas fa-pencil-alt disabled";
   }
   else{
@@ -533,7 +460,7 @@ function createPhotoPost(mode, photoPost){       //create an return new cardItem
   cardItem__controlButtons.appendChild(editIco);
 
   let trashIco = document.createElement('i');
-  if (mode === 'simple' || stateOfEnvironment.currentUser !== photoPost.author){
+  if (mode === 'simple' || getStateOfEnvironmentFromLocalSorage().currentUser !== photoPost.author){
     trashIco.className = "trash-ico fas fa-trash disabled";
   }
   else{
@@ -733,7 +660,7 @@ function isItLocalPost(selectedId){
 
 function getUserProfile(userName) {
   
-  return users.find(function(element){
+  return getUsersFromLocalSorage().find(function(element){
     return element.user === userName;
   });
 

@@ -1,12 +1,44 @@
 ;(function() {
 
-document.addEventListener("click", zoomPhotoPost);
+document.addEventListener("click", zoomPhotoPostHandler);
 
-document.addEventListener("click", loadMore);
+document.addEventListener("click", loadMoreHandler);
 
 document.addEventListener("click", removeHandler);
 
 document.addEventListener("click", likeHandler);
+
+document.addEventListener("click", loginHandler);
+
+document.addEventListener("click", logoutHandler);
+
+document.addEventListener("click", showLoginHandler);
+
+document.addEventListener("click", cancelLoginHandler);
+
+document.addEventListener("click", backHomeHandler);
+
+document.addEventListener("click", goToPersonalPageHandler);
+
+document.addEventListener("click", showOrHideSortByHandler);
+
+document.addEventListener("click", sortByHandler);
+
+document.addEventListener("click", showFilterByHashTagsHandler);
+
+document.addEventListener("click", cancelFilterByHashTagsHandler);
+
+document.addEventListener("click", addHashTagToSelectedHandler);
+
+document.addEventListener("click", removeHashTagFromSelectedHandler);
+
+document.addEventListener("click", addHashTagFromHintHandler);
+
+document.addEventListener("click", applyFilterByHashtagsHandler);
+
+document.addEventListener("click", showAddNewCardHandler);
+
+document.addEventListener("keydown", findAuthorHandler);
 
 let loadContentStatus = 'maybe there are some things';        //debug information
 
@@ -26,8 +58,15 @@ window.editPhotoPost = editPhotoPost;
 window.removePhotoPost = removePhotoPost;
 window.preparePage = preparePage;
 window.loadContent = loadContent;
+
 window.showAuthorsFocus = showAuthorsFocus;
-window.showAuthorsBlur = showAuthorsBlur;
+// window.showAuthorsBlur = showAuthorsBlur;
+
+window.focusInput = focusInput;
+window.blurLogin = blurLogin;
+// window.focusPassword = focusPassword;
+window.blurPassword = blurPassword;
+window.blurSelectHashtag = blurSelectHashtag;
 
 window.lastReceivedPosts = [];
 window.lastConfig = {};
@@ -62,7 +101,7 @@ function editPhotoPost(photoPost, selectedId){
 		return false;
 	}
 
-	let editedPhotoPost = photoPosts.find(function(element){
+	let editedPhotoPost = getPhotoPostsFromLocalSorage().find(function(element){
 		return element.id === selectedId;
 	});
 
@@ -79,7 +118,7 @@ function editPhotoPost(photoPost, selectedId){
 	
 	if (getStateOfEnvironmentFromLocalSorage().pageState === "more" && getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost === selectedId){
   	let newPhotoPost = createPhotoPost('more', editedPhotoPost);
-  	let oldPhotoPost = document.querySelector(".card-item--zoomed");
+  	let oldPhotoPost = document.querySelector(".card-item--zoomed:not(.add-new-card)");
   	oldPhotoPost.parentNode.replaceChild(newPhotoPost, oldPhotoPost);
 		setPhotoPostPosition(document.querySelector('.card-item--zoomed'));
 	}
@@ -117,7 +156,7 @@ function removePhotoPost(selectedId){
 
 }
 
-function loadMore(){
+function loadMoreHandler(){
 
 	target = event.target;
 	if (!target.classList.contains("button")){
@@ -129,8 +168,10 @@ function loadMore(){
 	
 	let responseStatus = loadContent(6, lastConfig);
 
-	if (responseStatus === "NO MORE"){
-		alert("NO MORE");
+  console.log(responseStatus);
+
+	if (responseStatus === "NO MORE" || responseStatus === "Nothing found"){
+		alert("NO MORE or NOTHING FOUND");
 		return true;
 	}
 
@@ -139,7 +180,7 @@ function loadMore(){
 function likeHandler(){
 
   target = event.target;
-  if (!target.classList.contains("fa-heart")){
+  if (!target.classList.contains("fa-heart") || !getStateOfEnvironmentFromLocalSorage().currentUser){
     return false;
   }
 
@@ -183,7 +224,7 @@ function likeHandler(){
  
 }
 
-function zoomPhotoPost(event){
+function zoomPhotoPostHandler(event){
 
   target = event.target;
   let photoPost;
@@ -192,7 +233,6 @@ function zoomPhotoPost(event){
   }
   photoPost = target.closest(".card-item");
   if (!photoPost){
-    console.log("YO");
     return false;
   }
 
@@ -200,8 +240,10 @@ function zoomPhotoPost(event){
 
   if (photoPost.classList.contains("card-item--zoomed")){
     document.querySelector(".main-content-wrapper").removeChild(photoPost);
-    getStateOfEnvironmentFromLocalSorage().pageState = 'simple';
-    getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost = null;
+    let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+    stateOfEnvironment.pageState = "simple";
+    stateOfEnvironment.zoomedPhotoPost = null;
+    localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
     return true;
   }
 
@@ -219,15 +261,24 @@ function zoomPhotoPost(event){
 
 }
 
-function setPhotoPostPosition(cardItem){
+function setPhotoPostPosition(cardItem, itIsntPhotoPost){
 
 	let distanceToTheBottom = document.body.scrollHeight - window.pageYOffset;
   let top;
-  if (distanceToTheBottom < cardItem.clientHeight){
+  let cardHeight = cardItem.clientHeight;
+  if (itIsntPhotoPost){
+    cardHeight += 100;
+  }
+
+  if (distanceToTheBottom < cardHeight){
     top = document.body.scrollHeight - cardItem.clientHeight;
   }
   else{
     top = window.pageYOffset;
+  }
+
+  if (itIsntPhotoPost){
+    top += 100;
   }
   cardItem.style.top = top + "px";
 
@@ -250,6 +301,13 @@ function preparePage(){
     let currentUserName = document.querySelector(".header__current-user-name");
     currentUserName.classList.remove("disabled");
     currentUserName.innerHTML = getStateOfEnvironmentFromLocalSorage().currentUser.split(' ')[0];   
+  }
+  else{
+    document.querySelector(".header__login").classList.remove("disabled");
+    document.querySelector(".header__logout").classList.add("disabled");
+    let currentUserName = document.querySelector(".header__current-user-name");
+    currentUserName.classList.add("disabled");
+    // currentUserName.innerHTML = null;
   }
 
   return true;
@@ -327,10 +385,153 @@ function loadContent(quantity, filterConfig){       //for load more filterConfig
 
 }
 
+function showLoginHandler(){
+
+  target = event.target;
+
+  if (!checkBeforeShowLogin(target)){
+    return false;
+  }
+
+  if (getStateOfEnvironmentFromLocalSorage().pageState === "more"){
+    let photoPost = document.querySelector(".card-item--zoomed:not(.add-new-card)");
+    document.querySelector(".main-content-wrapper").removeChild(photoPost);
+    let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+    stateOfEnvironment.pageState = "simple";
+    stateOfEnvironment.zoomedPhotoPost = null;
+    localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+  }
+
+  document.querySelector(".dark-background").classList.remove("disabled");
+  let loginContainer = document.querySelector(".login-container");
+  loginContainer.classList.toggle("disabled");
+  setPhotoPostPosition(loginContainer, true);
+
+}
+
+function checkBeforeShowLogin(target){
+
+  if (getStateOfEnvironmentFromLocalSorage().currentUser !== null){
+    return false;
+  }
+
+  if (target.classList.contains("header__login") || target.classList.contains("fa-heart") || target.getAttribute("id") === "add_new" || target.classList.contains("add-ico")){
+    return true;
+  }
+
+  return false;
+
+}
+
+function focusInput(){
+
+  target = this;
+  if (!target.value){
+    target.placeholder = '';
+  }
+  
+}
+
+function blurLogin(){
+
+  target = this;
+  if (isStringEmpty(target.value)){
+    target.value = '';
+    target.placeholder = 'login';
+  }
+
+}
+
+function blurPassword(){
+
+  target = this;
+  if (isStringEmpty(target.value)){
+    target.value = '';
+    target.placeholder = 'password';
+  }
+
+}
+
+function loginHandler() {
+
+  target = event.target;
+  if (!target.classList.contains("login-button")){
+    return false;
+  }
+  if(!validateLoginAndPassword()){
+    return false;
+  }
+
+  let login = document.querySelector(".login__form")[0];
+  let responseStatus = getUsersFromLocalSorage().find(function(element){
+    return element.login === login.value;
+  });
+
+  if (!responseStatus){
+    alert("sign up fail");
+    return false;
+  }
+
+  let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+  stateOfEnvironment.currentUser = responseStatus.user;
+  localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+  preparePage();
+
+  let cofig = Object.assign({}, lastConfig);      //to reload photoPosts
+  loadContent(lastReceivedPosts.length, cofig);
+
+  document.querySelector(".dark-background").classList.add("disabled");
+  let loginContainer = document.querySelector(".login-container");
+  loginContainer.classList.toggle("disabled");
+  
+}
+
+function validateLoginAndPassword(){
+
+  let loginForm = document.querySelector(".login__form");
+  if (!loginForm[0].value){
+    alert("invalid login");
+    return false;
+  }
+
+  return true;
+
+}
+
+function cancelLoginHandler() {
+
+  target = event.target;
+  if (!target.classList.contains("invisible-button")){
+    return false;
+  }
+
+  document.querySelector(".dark-background").classList.add("disabled");
+  let loginContainer = document.querySelector(".login-container");
+  loginContainer.classList.toggle("disabled");
+
+}
+
+function logoutHandler(){
+
+  let target = event.target;
+  if(!target.classList.contains("header__logout")){
+    return false;
+  }
+
+  let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+  stateOfEnvironment.currentUser = null;
+  localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+  preparePage();
+
+  let cofig = Object.assign({}, lastConfig);      //to reload photoPosts
+  loadContent(lastReceivedPosts.length, cofig);
+
+}
+
 function showAuthorsFocus(){
 
   target = this;
-  this.placeholder = '';
+  target.placeholder = '';
   let container = document.querySelector(".header__authors-container");
   container.classList.toggle("disabled");
   deleteChildren(container);
@@ -338,13 +539,13 @@ function showAuthorsFocus(){
 
 }
 
-function showAuthorsBlur(){
+// function showAuthorsBlur(){
 
-  target = this;
-  target.placeholder = 'Find more authors';
-  document.querySelector(".header__authors-container").classList.toggle("disabled");
+//   target = this;
+//   target.placeholder = 'Find more authors';
+//   document.querySelector(".header__authors-container").classList.toggle("disabled");
 
-}
+// }
 
 function showAuthors(){
 
@@ -370,6 +571,453 @@ function getAuthors(users, quantity){
     authors[i] = users()[i].user;
   }
   return authors;
+
+}
+
+function backHomeHandler(){
+
+  target = event.target;
+  if (target.classList.contains("header__logo") || target.classList.contains("footer__logo")){
+    let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+    stateOfEnvironment.personalPage = null;
+    localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+    document.querySelector(".about-user").classList.add("disabled");
+    loadContent(9);
+    resetFilters();
+  }
+
+  return false;
+
+}
+
+function goToPersonalPageHandler(){
+
+  target = event.target;
+  if (!target.closest(".header__form")){
+    hideAuthorsList();
+  }
+  let personalPageOwner = checkBeforeGoToPersonalPage();
+  if (!personalPageOwner){
+    return false;
+  }
+
+  let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+  if (stateOfEnvironment.pageState === "more"){
+    let zoomed__card = document.querySelector(".card-item--zoomed:not(.add-new-card)");
+    zoomed__card.parentNode.removeChild(zoomed__card);
+    document.querySelector(".dark-background").classList.toggle("disabled");
+    stateOfEnvironment.zoomedPhotoPost = null;
+    stateOfEnvironment.pageState = "simple";
+  }
+  stateOfEnvironment.personalPage = personalPageOwner;
+  localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+
+  preparePage();
+  loadContent(9);
+  resetFilters();
+
+}
+
+function sortByHandler(){
+
+  target = event.target;
+  if (!checkBeforeSortBy()){
+    return false;
+  }
+
+  let radioButton = target.querySelector(".unselected-ico");
+  if (!radioButton){
+    return false;
+  }
+
+  document.querySelector(".selected-ico").className = "unselected-ico fa fa-circle";
+  radioButton.className = "selected-ico fa fa-circle";
+
+  console.log(radioButton.getAttribute("data-sortmode"));
+  lastConfig.sort_mode = radioButton.getAttribute("data-sortmode");
+
+  if (lastConfig.author){
+    if (lastConfig.sort_mode === "AZ" || lastConfig.sort_mode === "ZA"){  // to prevent one specific problem
+      console.log("ignore");
+      return false;
+    }
+  }
+  
+  
+  let cofig = Object.assign({}, lastConfig);
+  loadContent(9, cofig);
+
+}
+
+function resetFilters(){
+
+  let selectedIco = document.querySelector(".selected-ico");
+  selectedIco.classList = "unselected-ico fa fa-circle";
+
+  document.querySelector("i[data-sortmode='new']").className = "selected-ico fa fa-circle";
+
+}
+
+function checkBeforeSortBy(){
+
+  let selectItem = target.closest(".sort-by__select-item"); 
+  if (!selectItem){
+    return false;
+  }
+
+  target = selectItem;
+  return true;
+
+}
+
+function showOrHideSortByHandler(){
+
+  target = event.target;
+  if(!checkBeforeHideOrShowSort()){
+    return false;
+  }
+
+  let elementSortBy = document.querySelector(".sort-by__container");
+  document.querySelector(".dark-background").classList.toggle("disabled");
+  elementSortBy.classList.toggle("disabled");
+
+}
+
+function checkBeforeHideOrShowSort(){
+
+  if (target.getAttribute("id") === "sort_by" || target.classList.contains("sort-ico")){
+    let elementSortBy = document.querySelector(".sort-by__container");
+    setPhotoPostPosition(elementSortBy, true);
+    return true;
+  }
+
+  if (target.classList.contains("close-button") && target.closest(".sort-by__container")){
+    return true;
+  }
+
+  return false;
+
+}
+
+function showFilterByHashTagsHandler(){
+
+  target = event.target;
+  if (!checkBeforeShowFilterByHashTags()){
+    return false;
+  }
+
+  filterByHashTags = document.querySelector(".select-hashtag");
+  document.querySelector(".dark-background").classList.toggle("disabled");
+  filterByHashTags.classList.toggle("disabled");
+  setPhotoPostPosition(filterByHashTags, true);
+
+  deleteChildren(document.getElementById("selected-hashtags-in-filter"));
+  deleteChildren(document.getElementById("hint-hashtags-in-filter"));
+
+  let currentHashTags = lastConfig.hashTags;
+  for (let i = 0; i < currentHashTags.length; i++){
+    addHashTag(currentHashTags[i], "selected");
+  }
+
+  let hintHashTags = getHintHashTags(5);
+  for (let i = 0; i < hintHashTags.length; i++){
+    addHashTag(hintHashTags[i], "hint");
+  }
+
+}
+
+function checkBeforeShowFilterByHashTags(){
+
+  if (target.getAttribute("id") === "filter_by" || target.classList.contains("hashtag-ico")){
+    return true;
+  }
+  return false;
+
+}
+
+function addHashTag(hashTag, typeOfHashTag){
+
+  let hashTagsContainer;
+  let hashTagItem = document.createElement("div");
+  hashTagItem.innerHTML = hashTag;
+
+  if (typeOfHashTag === "selected"){
+    hashTagsContainer = document.getElementById("selected-hashtags-in-filter");
+    hashTagItem.className = "select-hashtag__hashtag-item selected-hashtag";
+    let removeIco = document.createElement("i");
+    removeIco.className = "close-ico fas fa-times";
+    hashTagItem.appendChild(removeIco);
+    hashTagsContainer.appendChild(hashTagItem);
+  }
+  if (typeOfHashTag === "hint"){
+    hashTagsContainer = document.getElementById("hint-hashtags-in-filter");
+    hashTagItem.className = "select-hashtag__hashtag-item hint-hashtag";
+    hashTagsContainer.appendChild(hashTagItem);
+  }
+
+  return false;
+
+}
+
+function getHintHashTags(quantity){
+
+  let choosedHashTags = [];
+  for (let i = 0; i < quantity; i++){
+    choosedHashTags[i] = hashTagsHint[i];
+  }
+  return choosedHashTags;
+
+}
+
+function cancelFilterByHashTagsHandler(){
+
+  target = event.target;
+  if (target.getAttribute("id") !== "cancel-hashtags"){
+    return false;
+  }
+
+  filterByHashTags = document.querySelector(".select-hashtag");
+  document.querySelector(".dark-background").classList.toggle("disabled");
+  filterByHashTags.classList.toggle("disabled");
+
+  return true;
+
+}
+
+function addHashTagToSelectedHandler(){
+
+  let target = event.target;
+  if (!target.classList.contains("select-hashtag__submit")){
+    return false;
+  }
+
+  event.preventDefault();
+
+  let input = document.querySelector(".select-hashtag__input");
+  if (isStringEmpty(input.value) || input.value.indexOf(' ') !== -1){
+    input.value = '';
+    alert("Empty string or Spaces");
+    input.focus();  // the string is important to solve another specific problem
+    input.blur();
+    return false;
+  }
+
+  let selectedHashtags = target.closest(".select-hashtag").querySelectorAll(".selected-hashtag"); 
+
+  let alreadySelected = [].find.call(selectedHashtags, function(element){
+    return element.innerText === input.value;
+  });
+
+  if (alreadySelected){
+    alert("The same hashtag has already been added");
+    input.value = '';
+    return false;
+  }
+
+  addHashTag(input.value, "selected");
+  input.value = '';
+  input.focus();
+
+}
+
+function removeHashTagFromSelectedHandler(){
+
+  target = event.target;
+  if (!checkBeforeremoveHashTag()){
+    return false;
+  }
+
+  target.parentNode.removeChild(target);
+
+}
+
+function checkBeforeremoveHashTag(){
+
+  if (!target.closest(".select-hashtag") || target.classList.contains("hint-hashtag")){
+    return false;
+  }
+  if (target.classList.contains("select-hashtag__hashtag-item")){
+    return true;
+  }
+  if (target.classList.contains("close-ico")){
+    target = target.closest(".select-hashtag__hashtag-item");
+    return true;
+  }
+
+  return false;
+
+}
+
+function addHashTagFromHintHandler(){
+
+  target = event.target;
+  if (!checkBeforeAddHashTagFromHint()){
+    return false;
+  }
+
+  let selectedHashtags = target.closest(".select-hashtag").querySelectorAll(".selected-hashtag");
+
+  let alreadySelected = [].find.call(selectedHashtags, function(element){
+    return element.innerText === target.innerHTML;
+  });
+
+  if (alreadySelected){
+    alert("The same hashtag has already been added");
+    return false;
+  }
+
+  addHashTag(target.innerHTML, "selected");
+
+  return true;
+
+}
+
+function checkBeforeAddHashTagFromHint(){
+
+  if (!target.closest(".select-hashtag") || target.classList.contains("selected-hashtag")){
+    return false;
+  }
+  if (target.classList.contains("select-hashtag__hashtag-item")){
+    return true;
+  }
+
+  return false;
+
+}
+
+function applyFilterByHashtagsHandler(){
+
+  target = event.target;
+  if (target.getAttribute("id") !== "apply-hashtags"){
+    return false;
+  }
+
+  let selectedHashtags = target.closest(".select-hashtag").querySelectorAll(".selected-hashtag");
+  let newConfig = Object.assign({}, lastConfig);
+  newConfig.hashTags = [];
+  for (let i = 0; i < selectedHashtags.length; i++){
+    newConfig.hashTags.push(selectedHashtags[i].innerText);
+  }
+  console.log(newConfig);
+  loadContent(9, newConfig);
+
+}
+
+function blurSelectHashtag(){
+
+  theInput = document.querySelector(".select-hashtag__input");
+  if (isStringEmpty(theInput.value)){
+    theInput.value = '';
+    theInput.placeholder = 'Type #hashtags here';
+  }
+
+}
+
+function hideAuthorsList(){
+  let headerAuthorsContainer = document.querySelector(".header__authors-container");
+  if (!headerAuthorsContainer.classList.contains("disabled")){
+    headerAuthorsContainer.classList.toggle("disabled");
+    headerInput = document.querySelector(".header__input");
+    headerInput.placeholder = 'Find more authors';
+  }
+}
+
+function checkBeforeGoToPersonalPage(){
+
+  if (target.classList.contains("header__current-user-name")){
+    return getStateOfEnvironmentFromLocalSorage().currentUser;
+  }
+  if (target.classList.contains("header__author-name")){
+    hideAuthorsList();
+    return target.innerText;
+  }
+  if (target.classList.contains("card-item__photo-owner")){
+    
+    let postId = null;
+    if (target.closest(".card-item--zoomed")){    //rewrite the block to "check by id"
+      postId = getStateOfEnvironmentFromLocalSorage().zoomedPhotoPost;
+    }
+    else{
+      postId = target.closest(".card-item").getAttribute("id");
+    }
+
+    let author = photoPosts.getPhotoPost(postId).author;
+
+    return author;
+  }
+
+  return false;
+
+}
+
+function showAddNewCardHandler(){
+
+  target = event.target;
+  if (!checkBeforeShowAddNewCard()){
+    return false;
+  }
+
+  let addNewCard = document.querySelector(".add-new-card");
+  setPhotoPostPosition(addNewCard, true);
+  document.querySelector(".dark-background").classList.toggle("disabled");
+  addNewCard.classList.toggle("disabled");
+
+
+}
+
+function checkBeforeShowAddNewCard(){
+
+  if (!getStateOfEnvironmentFromLocalSorage().currentUser){
+    return false;
+  }
+  if (target.getAttribute("id") === "add_new" || target.classList.contains("add-ico")){
+    return true;
+  }
+
+  return false;
+
+}
+
+function findAuthorHandler(){
+
+  let target = event.target;
+
+  if (!checkBeforeFindAuthor(target)){
+    return false;
+  }
+
+  let inputValue = target.value;
+
+  let responseStatus = getUserProfile(inputValue);
+  if (!responseStatus){
+    alert("There is no such user");
+    return false;
+  }
+
+  let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+  stateOfEnvironment.personalPage = responseStatus.user;
+  localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+
+  hideAuthorsList();
+  target.value = "";
+  target.blur();
+
+  preparePage();
+  loadContent(9);
+  resetFilters();
+
+  console.log(responseStatus);
+
+}
+
+function checkBeforeFindAuthor(target){
+
+  if (target.classList.contains("header__input") && event.keyCode === 13){
+    event.preventDefault();
+    return !isStringEmpty(target.value);
+  }
+
+  return false;
 
 }
 

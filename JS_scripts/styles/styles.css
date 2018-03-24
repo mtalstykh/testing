@@ -643,6 +643,7 @@ footer{
 	position: absolute;
 	top: 100px;
 	width: 400px;
+	/* z-index: 9999; */
 }
 
 .sort-by__content{
@@ -657,6 +658,8 @@ footer{
 }
 
 .sort-by__select-item{
+	cursor: pointer;
+	width: 100px;
 	margin-left: 12px;
 	font: 400 22px "Roboto", sans-serif;
 	color: #424242;
@@ -690,6 +693,7 @@ footer{
 
 .login__login-input, .login__password-input{
 	border: 1px solid #529DFF;
+	color: #529DFF;
     font: 400 24px "Roboto", sans-serif;
     height: 40px;
     text-align: center;

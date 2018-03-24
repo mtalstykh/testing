@@ -1,7 +1,7 @@
 
 // getPostsFromJSON();
-getUsersFromJSON();
-getStateOfEnvironmentFromJSON();
+// getUsersFromJSON();
+// getStateOfEnvironmentFromJSON();
 
 function getPostsFromJSON (){
 
@@ -40,7 +40,7 @@ function parceDateFromJSON(jsonObject){
 function getUsersFromJSON () {
 
 	let xmlhttp = new XMLHttpRequest();
-	let url = "users.json?1";
+	let url = "users.json?2";
 	let receivedJSON = null;
 
 	xmlhttp.onreadystatechange = function() {

@@ -691,6 +691,8 @@ function validateBeforeEdit(photoPost) {
 // console.log(wrong_date); 
 // console.log(photoPosts.validatePhotoPost(wrong_date));
 
+window.isStringEmpty = isStringEmpty;
+
 return {
   "removePhotoPost": removePhotoPost,
   "getPhotoPost": getPhotoPost,

@@ -20,7 +20,7 @@
 				<a class="header__logo" href="#"></a>
 			</div>
 			<form class="header__form">
-				<input class="header__input" type="text" name="find-authors" placeholder="Find more authors" />
+				<input class="header__input" type="text" name="find-authors" placeholder="Find more authors" autocomplete="off"/>
 				<ul class="header__authors-container shadow disabled"></ul>
 			</form>
 			<div class="header__current-user-container">
@@ -50,9 +50,9 @@
 
 		<div class="main-content-wrapper shadow">
 			<section class="top-buttons">
-				<div class="button main-button"><i class="hashtag-ico fas fa-hashtag"></i>Filter by hashtag</div>
-				<div class="button main-button"><i class="add-ico fas fa-plus"></i>Add new card</div>
-				<div class="button main-button"><i class="sort-ico fas fa-sort"></i>Sort cards by</div>
+				<div id="filter_by" class="button main-button"><i class="hashtag-ico fas fa-hashtag"></i>Filter by hashtag</div>
+				<div id="add_new" class="button main-button"><i class="add-ico fas fa-plus"></i>Add new card</div>
+				<div id="sort_by" class="button main-button"><i class="sort-ico fas fa-sort"></i>Sort cards by</div>
 			</section>
 
 			<div class="dark-background disabled"></div>
@@ -74,34 +74,18 @@
 
 			<div class="select-hashtag disabled">
 				<div class="select-hashtag__title">Selected #hashtags</div>
-				<div class="select-hashtag__container">
-					<div class="select-hashtag__hashtag-item selected-hashtag">nature<i class="close-ico fas fa-times"></i></div>
-					<div class="select-hashtag__hashtag-item selected-hashtag">summer<i class="close-ico fas fa-times"></i></div>
-					<div class="select-hashtag__hashtag-item selected-hashtag">night<i class="close-ico fas fa-times"></i></div>
-					<div class="select-hashtag__hashtag-item selected-hashtag">japan<i class="close-ico fas fa-times"></i></div>
-					<div class="select-hashtag__hashtag-item selected-hashtag">sunset<i class="close-ico fas fa-times"></i></div>
-					<div class="select-hashtag__hashtag-item selected-hashtag">happy<i class="close-ico fas fa-times"></i></div>
-					<div class="select-hashtag__hashtag-item selected-hashtag">sky<i class="close-ico fas fa-times"></i></div>
-				</div>
+				<div id="selected-hashtags-in-filter" class="select-hashtag__container"></div>
 				<div class="select-hashtag__form-container">
 					<form class="select-hashtag__form">
-						<input class="select-hashtag__input" type="text" name="add-hashtag" placeholder="Type #hashtags here"/>
+						<input class="select-hashtag__input" type="text" name="add-hashtag" placeholder="Type #hashtags here" autocomplete="off"/>
 						<input class="select-hashtag__submit" type="submit" value="Add">
 					</form>
 				</div>
 				<p class="select-hashtag__cheatsheet">There is some examples below. You can add it to selected hashtags by click.</p>
-				<div class="select-hashtag__container">
-					<div class="select-hashtag__hashtag-item hint-hashtag">urban</div>
-					<div class="select-hashtag__hashtag-item hint-hashtag">winter</div>
-					<div class="select-hashtag__hashtag-item hint-hashtag">morning</div>
-					<div class="select-hashtag__hashtag-item hint-hashtag">forest</div>
-					<div class="select-hashtag__hashtag-item hint-hashtag">cars</div>
-					<div class="select-hashtag__hashtag-item hint-hashtag">darkness</div>
-					<div class="select-hashtag__hashtag-item hint-hashtag">building</div>
-				</div>
+				<div id="hint-hashtags-in-filter" class="select-hashtag__container"></div>
 				<div class="select-hashtag__button-container">
-					<div class="button narrow-button">Apply filter</div>
-					<div class="button narrow-button">Cancel</div>
+					<div id="apply-hashtags" class="button narrow-button">Apply filter</div>
+					<div id="cancel-hashtags" class="button narrow-button">Cancel</div>
 				</div>
 			</div>
 
@@ -143,13 +127,13 @@
 				<div class="sort-by__content">
 					<span class="sort-by__sort-mode">Date</span>
 					<ul class="sort-by__select sort-by__select--date">
-						<li class="sort-by__select-item"><i class="selected-ico fa fa-circle" aria-hidden="true"></i>Newest</li>
-						<li class="sort-by__select-item"><i class="unselected-ico fa fa-circle" aria-hidden="true"></i>Oldest</li>
+						<li class="sort-by__select-item"><i data-sortmode="new" class="selected-ico fa fa-circle" aria-hidden="true"></i>Newest</li>
+						<li class="sort-by__select-item"><i data-sortmode="old" class="unselected-ico fa fa-circle" aria-hidden="true"></i>Oldest</li>
 					</ul>
 					<span class="sort-by__sort-mode">Nickname</span>
 					<ul class="sort-by__select sort-by__select--nickname">
-						<li class="sort-by__select-item"><i class="unselected-ico fa fa-circle" aria-hidden="true"></i>A first</li>
-						<li class="sort-by__select-item"><i class="unselected-ico fa fa-circle" aria-hidden="true"></i>Z first</li>
+						<li class="sort-by__select-item"><i data-sortmode="AZ" class="unselected-ico fa fa-circle" aria-hidden="true"></i>A first</li>
+						<li class="sort-by__select-item"><i data-sortmode="ZA" class="unselected-ico fa fa-circle" aria-hidden="true"></i>Z first</li>
 					</ul>
 				</div>
 				<div class="card-item__button-container">
@@ -179,18 +163,31 @@
 
 <script type="text/javascript">
 
-	console.log(loadContent(9));
-	
-	console.log(preparePage());
+	// let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
+	// stateOfEnvironment.currentUser = "Alexander Martinchik";
+	// localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
 
-	let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();
-	stateOfEnvironment.currentUser = "Alexander Martinchik";
-  	localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
 	preparePage();
 	loadContent(9);
 
 	document.querySelector('.header__input').addEventListener("focus", showAuthorsFocus);
-	document.querySelector('.header__input').addEventListener("blur", showAuthorsBlur);
+	// document.querySelector('.header__input').addEventListener("blur", showAuthorsBlur);
 
+	document.querySelector('.login__login-input').addEventListener("focus", focusInput);
+	document.querySelector('.login__login-input').addEventListener("blur", blurLogin);
+
+	document.querySelector('.login__password-input').addEventListener("focus", focusInput);
+	document.querySelector('.login__password-input').addEventListener("blur", blurPassword);
+
+
+	document.querySelector('.select-hashtag .select-hashtag__input').addEventListener("focus", focusInput);
+	document.querySelector('.select-hashtag .select-hashtag__input').addEventListener("blur", blurSelectHashtag);
+	// document.querySelector('.select-hashtag .select-hashtag__input').addEventListener('keydown', function() {
+	// if (event.keyCode === 13) {
+	// 	event.preventDefault();
+	// 	console.log(this.value);
+	// 	return false;
+	// }
+	// });
 
 </script>

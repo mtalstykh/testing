@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="theme-color" content="#529DFF">
+	<meta name="viewport" content="width=device-width, initial-scale=0.888888888888888888889, user-scalable=no">
+	<title>AmAm</title>
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" >
+	<link rel="stylesheet" type="text/css" href="styles/styles.css">
+	<script src="scripts/autoreload.js"></script>
+	<script src="Task_6.js"></script>	
+</head>
+<body>
+	<header class="shadow">
+		<div class="header__content">
+			<div class="header__logo-container">
+				<a class="header__logo"></a>
+			</div>
+			<form class="header__form">
+				<input class="header__input" type="text" name="find-authors" placeholder="Find more authors" autocomplete="off"/>
+				<ul class="header__authors-container shadow disabled"></ul>
+			</form>
+			<div class="header__current-user-container">
+				<div class="header__current-user">
+					<div class="header__current-user-name disabled"></div>
+					<div class="header__logout disabled">Log out</div>
+					<div class="header__login">log in</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	
+	<div class="main-wrapper">
+		<section class="about-user shadow disabled">
+			<img class="about-user__avatar" src="" alt="avatar">
+			<div class="about-user__personal-info">
+				<div class="about-user__name">
+				</div>
+				<div class="about-user__location">
+				</div>
+			</div>
+			<div class="about-user__account-description">
+				<div class="about-user__title">About you</div>
+				<p class="about-user__description-text">
+			</div>
+		</section>	
+
+		<div class="main-content-wrapper shadow">
+			<section class="top-buttons">
+				<div id="filter_by" class="button main-button"><i class="hashtag-ico fas fa-hashtag"></i>Filter by hashtag</div>
+				<div id="add_new" class="button main-button"><i class="add-ico fas fa-plus"></i>Add new card</div>
+				<div id="sort_by" class="button main-button"><i class="sort-ico fas fa-sort"></i>Sort cards by</div>
+			</section>
+
+			<div class="dark-background disabled"></div>
+
+			<div class="login-container disabled">
+				<div class="login__logo-container">
+					<a class="login__logo"></a>
+				</div>
+				<form class="login__form">
+					<input class="login__login-input" type="text" name="login" placeholder="login">
+					<input class="login__password-input" type="password" name="password" placeholder="password">
+				</form>
+				<div class="login__buttons-container">
+					<div class="button login-button">sign in</div>
+					<span class="login__or">or</span>
+					<div id="cancel-login" class="button invisible-button">continue as a guest</div>
+				</div>
+			</div>
+
+			<div class="select-hashtag disabled">
+				<div class="select-hashtag__title">Selected #hashtags</div>
+				<div id="selected-hashtags-in-filter" class="select-hashtag__container"></div>
+				<div class="select-hashtag__form-container">
+					<form class="select-hashtag__form">
+						<input class="select-hashtag__input" type="text" name="add-hashtag" placeholder="Type #hashtags here" autocomplete="off"/>
+						<input class="select-hashtag__submit" type="submit" value="Add">
+					</form>
+				</div>
+				<p class="select-hashtag__cheatsheet">There is some examples below. You can add it to selected hashtags by click.</p>
+				<div id="hint-hashtags-in-filter" class="select-hashtag__container"></div>
+				<div class="select-hashtag__button-container">
+					<div id="apply-hashtags" class="button narrow-button">Apply filter</div>
+					<div id="cancel-hashtags" class="button narrow-button">Cancel</div>
+				</div>
+			</div>
+
+			<div class="add-new-card card-item shadow card-item--zoomed disabled">
+					<div class="add-new-card__upload-photo">
+						<div class="button upload-photo">Upload a photo</div>
+					</div>
+					<p class="card-item__title-edit-hashtag">Add #hashtags:</p>
+					<div class="card-item__hashtags-container"></div>
+					<div class="select-hashtag__form-container card-item__form-editing">
+						<form class="select-hashtag__form">
+							<input class="select-hashtag__input" type="text" name="add-hashtag" placeholder="Type #hashtags here" autocomplete="off"/>
+							<input class="select-hashtag__submit" type="submit" value="Add">
+						</form>
+					</div>
+					<p class="select-hashtag__cheatsheet card-item__cheatsheet-editing">There is some examples below. You can add it to selected hashtags by click.</p>
+					<div class="card-item__hashtags-container">
+						<div class="select-hashtag__hashtag-item hint-hashtag">urban</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">winter</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">morning</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">forest</div>
+						<div class="select-hashtag__hashtag-item hint-hashtag">cars</div>
+					</div>
+					<p class="card-item__title-edit-description">Add description:</p>
+					<textarea class="card-item__textarea" maxlength="200"></textarea>
+					<div class="card-item__button-container">
+						<div id="apply-add" class="button narrow-button">Publish the card</div>
+						<div id="cancel-add" class="button narrow-button">Cancel</div>
+					</div>					
+			</div>
+
+			<div class="sort-by__container disabled">
+				<div class="sort-by__title">Sort by:</div>
+				<div class="sort-by__content">
+					<span class="sort-by__sort-mode">Date</span>
+					<ul class="sort-by__select sort-by__select--date">
+						<li class="sort-by__select-item"><i data-sortmode="new" class="selected-ico fa fa-circle" aria-hidden="true"></i>Newest</li>
+						<li class="sort-by__select-item"><i data-sortmode="old" class="unselected-ico fa fa-circle" aria-hidden="true"></i>Oldest</li>
+					</ul>
+					<span class="sort-by__sort-mode">Nickname</span>
+					<ul class="sort-by__select sort-by__select--nickname">
+						<li class="sort-by__select-item"><i data-sortmode="AZ" class="unselected-ico fa fa-circle" aria-hidden="true"></i>A first</li>
+						<li class="sort-by__select-item"><i data-sortmode="ZA" class="unselected-ico fa fa-circle" aria-hidden="true"></i>Z first</li>
+					</ul>
+				</div>
+				<div class="card-item__button-container">
+					<div class="button narrow-button close-button">Close</div>
+				</div>
+			</div>
+
+			<section class="cards-container">
+
+			</section>
+
+			<div class="button-showmore-container">
+				<div class="button main-button">Load more</div>
+			</div>
+		</div>
+	</div>
+
+	<footer>
+		<div class="footer-content">
+			<span class="footer__left-text">Minsk<br/>2018</span>
+			<a class="footer__logo" href="#"></a>
+			<span class="footer__right-text">Created by<br/>Maksim Talstykh</span>
+		</div>
+	</footer>
+
+</body>
+</html>
+
+<script src="Task_4.js"></script>
+<script src="Task_5.js"></script>
+<script type="text/javascript">
+
+	document.querySelector('.header__input').addEventListener("focus", showAuthorsFocus);
+
+	document.querySelector('.login__login-input').addEventListener("focus", focusInput);
+	document.querySelector('.login__login-input').addEventListener("blur", blurLogin);
+
+	document.querySelector('.login__password-input').addEventListener("focus", focusInput);
+	document.querySelector('.login__password-input').addEventListener("blur", blurPassword);
+
+	document.querySelector('.select-hashtag .select-hashtag__input').addEventListener("focus", focusInput);
+	document.querySelector('.select-hashtag .select-hashtag__input').addEventListener("blur", blurSelectHashtag);
+
+	document.querySelector('.add-new-card .select-hashtag__input').addEventListener("focus", focusInput);
+	document.querySelector('.add-new-card .select-hashtag__input').addEventListener("blur", blurSelectHashtag);
+
+	document.querySelector(".upload-photo").addEventListener('click', function(){alert("In this version you can't choose photo. By default will be added photo with the cat");});
+
+	let stateOfEnvironment = getStateOfEnvironmentFromLocalSorage();	//to reset stateOfEnvironment
+  	stateOfEnvironment.pageState = "simple";
+  	stateOfEnvironment.zoomedPhotoPost = null;
+  	localStorage.setItem("stateOfEnvironment", JSON.stringify(stateOfEnvironment));
+
+  	setTimeout("preparePage();loadContent(9);", 100);	//to wait 3 get request
+
+</script>

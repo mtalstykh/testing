@@ -4,3 +4,5 @@
 out/
 *.jshintrc
 autoreload.js
+out/
+node_modules/

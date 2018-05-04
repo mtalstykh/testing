@@ -2,8 +2,7 @@
 .DS_Store/
 .idea/
 out/
-*.jshintrc
-autoreload.js
-out/
 node_modules/
-hello.html
+build/
+.vscode/
+*.jshintrc
